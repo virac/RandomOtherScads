@@ -30,13 +30,29 @@ fixing_pin2_pos = [4,0,0];
 led_pin1_pos = [-1,-4,0];
 led_pin2_pos = [1,-4,0];
 
-module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true,true,true,true]) {
+//cherry_keyswitch(fixing_pins = true, led_pins = false, show_part = [true,true,true,true,true,true]);
+
+module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true,true,true,true,false,false]) {
 	translate([0,0,cherry_mx_mount_thickness]) {
-		if( show_part[0] == true )
+		if( show_part[0] == true ) {
 			translate([0,0,cherry_mx_top_thickness/2])
 				cube([cherry_mx_outer_width,cherry_mx_outer_width,	
 						cherry_mx_top_thickness],center = true);
-	
+		}
+
+		if( show_part[5] == true ) { // cap extension
+			translate([0,0,cherry_mx_top_thickness])
+				cube([cherry_mx_outer_width,cherry_mx_outer_width,	
+						2],center = true);
+
+		}
+
+		if( show_part[4] == true ) { //space for the grip
+			translate([0,0,cherry_mx_top_thickness/2+0.5])
+				cube([4,
+						cherry_mx_outer_width+2*cherry_mx_keycap_buffer,	
+						cherry_mx_top_thickness+1],center = true);
+		}
 		if( show_part[1] == true ) {
 			cube([min(cherry_mx_outer_width,cherry_mx_mount_width),
 					min(cherry_mx_outer_width,cherry_mx_mount_width),	
@@ -48,10 +64,10 @@ module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true
 		}
 	
 		if( show_part[2] == true ) {
-			translate([0,0,-(cherry_mx_mount_thickness+0.5/2)])
-				cube([half_between(cherry_mx_outer_width,cherry_mx_mount_width),
+			translate([0,0,-(cherry_mx_mount_thickness+3.5/2)])
+				cube([4,
 						half_between(cherry_mx_outer_width,cherry_mx_mount_width),	
-						0.5],center = true);
+						3.5],center = true);
 		}
 
 		if( show_part[3] == true ) translate([0,0,-cherry_mx_mount_pin_thickness]) {
