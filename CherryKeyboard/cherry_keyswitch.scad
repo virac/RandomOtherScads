@@ -12,10 +12,10 @@ key_pin_height = 3.3;
 led_pin_diameter = 1;
 led_pin_height = 3.3;
 
-cherry_mx_outer_width = 15.6;
+cherry_mx_outer_width = 16;//15.6;
 cherry_mx_outer_thickness = 11;
-cherry_mx_mount_pin_thickness = 5;
-cherry_mx_top_thickness = cherry_mx_outer_thickness-cherry_mx_mount_pin_thickness;
+cherry_mx_mount_bottom_thickness = 5;
+cherry_mx_top_thickness = cherry_mx_outer_thickness-cherry_mx_mount_bottom_thickness;
 
 cherry_mx_keycap_buffer = 0.6;
 
@@ -30,9 +30,9 @@ fixing_pin2_pos = [4,0,0];
 led_pin1_pos = [-1,-4,0];
 led_pin2_pos = [1,-4,0];
 
-//cherry_keyswitch(fixing_pins = true, led_pins = false, show_part = [true,true,true,true,true,true]);
+//cherry_keyswitch(fixing_pins = false, switch_pins = false, led_pins = false, show_part = [true,true,true,false,true,true]);//[true,true,true,true,true,true]);
 
-module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true,true,true,true,false,false]) {
+module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = false, show_part = [true,true,true,true,false,false]) {
 	translate([0,0,cherry_mx_mount_thickness]) {
 		if( show_part[0] == true ) {
 			translate([0,0,cherry_mx_top_thickness/2])
@@ -58,23 +58,23 @@ module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true
 					min(cherry_mx_outer_width,cherry_mx_mount_width),	
 					0.2],center = true);
 
-			translate([0,0,-(cherry_mx_mount_pin_thickness)/2])
+			translate([0,0,-(cherry_mx_mount_bottom_thickness)/2])
 				cube([cherry_mx_mount_width,cherry_mx_mount_width,	
-						cherry_mx_mount_pin_thickness],center = true);
+						cherry_mx_mount_bottom_thickness],center = true);
 		}
 	
 		if( show_part[2] == true ) {
-			translate([0,0,-(cherry_mx_mount_thickness+(3.5+max(center_pole_height,fixing_pin_height))/2)])
+			translate([0,0,-(cherry_mx_mount_thickness+0.2+(max(center_pole_height,fixing_pin_height))/2)])
 				cube([4,
 						half_between(cherry_mx_outer_width,cherry_mx_mount_width),	
-						3.5+max(center_pole_height,fixing_pin_height)],center = true);
+						max(center_pole_height,fixing_pin_height)],center = true);
 		}
 
-		if( show_part[3] == true ) translate([0,0,-cherry_mx_mount_pin_thickness]) {
+		if( show_part[3] == true ) translate([0,0,-cherry_mx_mount_bottom_thickness]) {
 			color("Black") rotate([180,0,0]) 
 				cylinder(r = center_pole_diameter/2, h = center_pole_height);
 	
-			color("Blue"){
+			if( switch_pins == true ) color("Blue"){
 				translate(grid_space*key_pin1_pos) rotate([180,0,0]) 
 					cylinder(r = key_pin_diameter/2, h = key_pin_height);
 				translate(grid_space*key_pin2_pos) rotate([180,0,0]) 
@@ -95,14 +95,39 @@ module cherry_keyswitch( fixing_pins = true, led_pins = false, show_part = [true
 					cylinder(r = led_pin_diameter/2, h = led_pin_height);
 			}
 		} else {
-			translate([0,0,-(cherry_mx_mount_pin_thickness)])
+			translate([0,0,-(cherry_mx_mount_bottom_thickness)])
 				cube([cherry_mx_mount_width,
 						cherry_mx_mount_width,	
 						0.2],center = true);
 
-			translate([0,0,-(cherry_mx_mount_pin_thickness)-max(center_pole_height,fixing_pin_height)])
-				cube([cherry_mx_mount_width,cherry_mx_mount_width,	
-						max(center_pole_height,fixing_pin_height)*2],center = true);
+			if( fixing_pins == true ) {
+				translate([0,2+(cherry_mx_mount_width-6)/4,
+							-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)])
+					cube([cherry_mx_mount_width,(cherry_mx_mount_width-2)/2,	
+							max(center_pole_height,fixing_pin_height)*2],center = true);
+				translate([0,-2-(cherry_mx_mount_width-2)/4,
+							-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)])
+					cube([cherry_mx_mount_width,(cherry_mx_mount_width-6)/2,	
+							max(center_pole_height,fixing_pin_height)*2],center = true);
+				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)*2])
+					cube([cherry_mx_mount_width,6,	
+							max(center_pole_height,fixing_pin_height)*2],center = true);
+				translate([0,0,-cherry_mx_mount_bottom_thickness]) {
+					rotate([180,0,0]) 
+						cylinder(r = center_pole_diameter/2, h = center_pole_height*2);
+		
+					if( fixing_pins == true ) {
+						translate(grid_space*fixing_pin1_pos) rotate([180,0,0]) 
+							cylinder(r = fixing_pin_diameter/2, h = fixing_pin_height*2);
+						translate(grid_space*fixing_pin2_pos) rotate([180,0,0]) 
+							cylinder(r = fixing_pin_diameter/2, h = fixing_pin_height*2);
+					}
+				}
+			} else {
+				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)*2])
+					cube([cherry_mx_mount_width,cherry_mx_mount_width,	
+							max(center_pole_height,fixing_pin_height)*4],center = true);
+			}
 		}
 	}
 }
