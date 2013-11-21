@@ -124,9 +124,9 @@ module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = fal
 					}
 				}
 			} else {
-				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)*2])
+				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)*8])
 					cube([cherry_mx_mount_width,cherry_mx_mount_width,	
-							max(center_pole_height,fixing_pin_height)*4],center = true);
+							max(center_pole_height,fixing_pin_height)*16],center = true);
 			}
 		}
 	}
