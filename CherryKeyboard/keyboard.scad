@@ -77,7 +77,6 @@ module NbyN_patch(n,x,y) {
 }
 
 module patch_box(i,j) {
-	h = -cherry_mx_mount_bottom_thickness+-row_shift[i][shift_z]-col_shift[j][shift_z];
 	translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 					(default_key_vert_offset +default_key_vert_space )/2,
 					cherry_mx_mount_thickness/2] )
@@ -94,9 +93,9 @@ module patch_box(i,j) {
 
 
 
-					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+sin(col_shift[j][shift_rot])*h,
-									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-sin(row_shift[i][shift_rot])*h,
-									h])
+					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+sin(col_shift[j][shift_rot])*get_h(i,j),
+									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-sin(row_shift[i][shift_rot])*get_h(i,j),
+									get_h(i,j)])
 						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
 								default_key_vert_offset/2 -cherry_mx_mount_width/2,
 								cherry_mx_mount_thickness], center = true);
@@ -106,7 +105,7 @@ module patch_box(i,j) {
 					}//hull
 				}// for( o = [-1,1] ) for( p = [-1,1] )
 }
-
+function get_h(i,j) = (-cherry_mx_mount_bottom_thickness+-row_shift[i][shift_z]-col_shift[j][shift_z]);
 module total_patch_bottom() {
 	hull() 
 		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
@@ -121,14 +120,15 @@ module total_patch_bottom() {
 									default_key_vert_offset +default_key_vert_space,
 									cherry_mx_mount_thickness],center = true);*/
 
-				for( o = [-1,1] ) for( p = [-1,1] ) {
-					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+sin(col_shift[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+-row_shift[i][shift_z]-col_shift[j][shift_z]),
-									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-sin(row_shift[i][shift_rot])*(-cherry_mx_mount_bottom_thickness+-row_shift[i][shift_z]-col_shift[j][shift_z]),
-									-cherry_mx_mount_bottom_thickness+-row_shift[i][shift_z]-col_shift[j][shift_z]])
-						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
-								default_key_vert_offset/2 -cherry_mx_mount_width/2,
-								cherry_mx_mount_thickness], center = true);
-}
+						for( o = [-1,1] ) for( p = [-1,1] ) {
+							translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2) + 
+												sin(col_shift[j][shift_rot])*get_h(i,j),
+											p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-sin(row_shift[i][shift_rot])*get_h(i,j),
+											get_h(i,j)])
+								cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
+										default_key_vert_offset/2 -cherry_mx_mount_width/2,
+										cherry_mx_mount_thickness], center = true);
+						}
 }
 
 module keyboard_plate(row,col,make_flat = false,scale_xy ) {
