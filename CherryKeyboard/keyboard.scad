@@ -13,7 +13,7 @@ default_key_horiz_offset = default_key_size+default_key_horiz_space;
 default_key_vert_offset = default_key_size+default_key_vert_space;
 
 rows = 4;//5;
-cols = 5;//6;
+cols = 6;//6;
 
 shift_x = 0;
 shift_y = 1;
@@ -35,7 +35,7 @@ col_shift = [	[0,0,3,10],
 					[0,0,1,0],
 					[0,4,0,0],
 					[0,7,0,0],
-					[0,2,2,-7],
+					[0,2,1,0],
 					[0,0,3,-10],
 					[0,0,0,0],
 					[0,0,0,0],
@@ -82,8 +82,8 @@ module patch_box(i,j) {
 					cherry_mx_mount_thickness/2] )
 		translate([ row_shift[i][shift_x],i*default_key_vert_offset,row_shift[i][shift_z] ] )
 			translate([j*default_key_horiz_offset,col_shift[j][shift_y],col_shift[j][shift_z] ]) 
-				for( o = [-1,1] ) for( p = [-1,1] ) {
-					hull() {
+				hull() {
+					for( o = [-1,1] ) for( p = [-1,1] ) {
 						rotate([row_shift[i][shift_rot],0,0]) rotate([0,col_shift[j][shift_rot],0])
 							translate([	o*default_key_horiz_offset/4,
 											p*default_key_vert_offset /4,0])
@@ -93,9 +93,9 @@ module patch_box(i,j) {
 
 
 
-					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+sin(col_shift[j][shift_rot])*get_h(i,j),
-									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-sin(row_shift[i][shift_rot])*get_h(i,j),
-									get_h(i,j)])
+						translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+(o==1?min(sin(col_shift[j][shift_rot]),0):max(sin(col_shift[j][shift_rot]),0))*get_h(i,j),
+										p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)- (p==1?max(sin(row_shift[i][shift_rot]),0):min(sin(row_shift[i][shift_rot]),0))*get_h(i,j),
+										get_h(i,j)])
 						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
 								default_key_vert_offset/2 -cherry_mx_mount_width/2,
 								cherry_mx_mount_thickness], center = true);
