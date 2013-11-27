@@ -64,7 +64,7 @@ module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = fal
 		}
 	
 		if( show_part[2] == true ) {
-			translate([0,0,-(cherry_mx_mount_thickness+0.2+(max(center_pole_height,fixing_pin_height))/2)])
+			translate([0,0,-(cherry_mx_mount_thickness+(max(center_pole_height,fixing_pin_height))/2)])
 				cube([4,
 						half_between(cherry_mx_outer_width,cherry_mx_mount_width),	
 						max(center_pole_height,fixing_pin_height)],center = true);

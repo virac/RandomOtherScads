@@ -47,16 +47,16 @@ col_shift = [	[0,0,3,10],
 					[0,0,0,0]];
 
 thumb_row_shift = [
-					[0,0,0,0],
-					[0,0,0,0],
-					[0,0,3,15]];
+					[0,0,1,0],
+					[0,0,1,0],
+					[0,0,4,15]];
 thumb_col_shift = [	
-					[0,0,1.8,10],
-					[0,0,0,0],
-					[0,0,1.8,-10]];
+					[0,0,2.8,10],
+					[0,0,1,0],
+					[0,0,2.8,-10]];
 
-thumb_offset_x = 60;
-thumb_offset_y = -65;
+thumb_offset_x = 62;
+thumb_offset_y = -50;
 
 center_key = [3,2];
 thumb_center_key = [1,1];
@@ -74,7 +74,7 @@ key_enable = [	[1,1,1,1,1,0,0,0,0,0,0],
 thumb_key_enable = [
 				[2,2,1,0,0,0,0],
 				[3,3,1,0,0,0,0],
-				[1,1,1,0,0,0,0],
+				[0,1,1,0,0,0,0],
 				[0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0]];
 
@@ -146,9 +146,9 @@ module patch_box(i,j,row_s,col_s) {
 					(default_key_vert_offset +default_key_vert_space )/2,
 					cherry_mx_mount_thickness/2] )
 		translate( key_row_tanslation( row_s,i ) )
-			translate( key_col_tanslation( col_s,j ) ) 
+			translate( key_col_tanslation( col_s,j ) )
 				hull() {
-					for( o = [-1,1] ) for( p = [-1,1] ) {
+					for( o = [-1,1] ) for( p = [-1,1] ) { 
 						rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
 							translate([	o*default_key_horiz_offset/4,
 											p*default_key_vert_offset /4,0])
@@ -193,7 +193,7 @@ module total_patch_bottom() {
 			for( j = [0:cols-1] ) 
 				key_patch_bottom(i,j,row_shift,col_shift);
 		translate([	center_key[0]*default_key_horiz_offset+thumb_offset_x,
-						center_key[1]*default_key_vert_offset+thumb_offset_y,0])
+						center_key[1]*default_key_vert_offset+thumb_offset_y,cherry_mx_mount_thickness/2])
 			rotate(thumb_key_def_rot) 
 				translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 								(default_key_vert_offset +default_key_vert_space )/2,0])
