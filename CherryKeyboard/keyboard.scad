@@ -55,7 +55,7 @@ thumb_col_shift = [
 					[0,0,1,0],
 					[0,0,2.8,-10]];
 
-thumb_offset_x = 62;
+thumb_offset_x = 70;
 thumb_offset_y = -50;
 
 center_key = [3,2];
