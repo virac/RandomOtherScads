@@ -7,7 +7,7 @@ show_keyswitches = false;
 show_keycaps = false;
 
 default_key_size = cherry_mx_outer_width;
-default_key_horiz_space = 3;
+default_key_horiz_space = 5;
 default_key_vert_space = 5;
 
 default_key_horiz_offset = default_key_size+default_key_horiz_space;
