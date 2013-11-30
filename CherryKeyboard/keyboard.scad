@@ -36,10 +36,10 @@ row_shift = [	[0,0,7,-20],
 					[0,0,0,0],
 					[0,0,0,0]];
 col_shift = [	[0,0,3,10],
-					[0,0,1,0],
-					[0,4,0,0],
-					[0,7,0,0],
 					[0,2,1,0],
+					[0,10,0,0],
+					[0,12,0,0],
+					[0,7,1,0],
 					[0,0,3,-10],
 					[0,0,8,-20],
 					[0,0,0,0],
@@ -169,29 +169,36 @@ function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][s
 function key_row_tanslation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
 function key_col_tanslation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
 
-module key_patch_bottom(i,j,row_s,col_s) {
-	translate( key_row_tanslation( row_s,i ) )
-		translate( key_col_tanslation( col_s,j ) ) 
-			for( o = [-1,1] ) for( p = [-1,1] ) {
-				translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2) + 
-									sin(col_s[j][shift_rot])*get_h(i,j,row_s,col_s),
-								p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-
-									sin(row_s[i][shift_rot])*get_h(i,j,row_s,col_s),
-								get_h(i,j,row_s,col_s)])
-					cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
-							default_key_vert_offset/2 -cherry_mx_mount_width/2,
-							cherry_mx_mount_thickness], center = true);
-			}
+module key_patch_bottom(i,j,row_s,col_s,enable) {
+	if( enable[i][j] != 0 ) {
+		translate( key_row_tanslation( row_s,i ) )
+			translate( key_col_tanslation( col_s,j ) ) 
+				for( o = [-1,1] ) for( p = [-1,1] ) {
+					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2) + 
+										sin(col_s[j][shift_rot])*get_h(i,j,row_s,col_s),
+									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-
+										sin(row_s[i][shift_rot])*get_h(i,j,row_s,col_s),
+									get_h(i,j,row_s,col_s)])
+						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
+								default_key_vert_offset/2 -cherry_mx_mount_width/2,
+								cherry_mx_mount_thickness], center = true);
+				}
+	}
 }
 
-module total_patch_bottom() {
+module main_patch_bottom() {
 	hull() {
 		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-						(default_key_vert_offset +default_key_vert_space )/2,
-						cherry_mx_mount_thickness/2] )
-		for( i = [0:rows-1] )
-			for( j = [0:cols-1] ) 
-				key_patch_bottom(i,j,row_shift,col_shift);
+							(default_key_vert_offset +default_key_vert_space )/2,
+							cherry_mx_mount_thickness/2] )
+			for( i = [0:rows-1] )
+				for( j = [0:cols-1] ) 
+					key_patch_bottom(i,j,row_shift,col_shift,key_enable);
+	}
+}
+
+module thumb_patch_bottom() {
+	hull() {
 		translate([	center_key[0]*default_key_horiz_offset+thumb_offset_x,
 						center_key[1]*default_key_vert_offset+thumb_offset_y,cherry_mx_mount_thickness/2])
 			rotate(thumb_key_def_rot) 
@@ -201,7 +208,14 @@ module total_patch_bottom() {
 									-thumb_center_key[1]*default_key_vert_offset,0])
 						for( i = [0:thumb_rows-1] )
 							for( j = [0:thumb_cols-1] ) 
-								key_patch_bottom(i,j,thumb_row_shift,thumb_col_shift);
+								key_patch_bottom(i,j,thumb_row_shift,thumb_col_shift,thumb_key_enable);
+	}
+}
+
+module total_patch_bottom() {
+	hull() {
+		main_patch_bottom();
+		thumb_patch_bottom();
 	}
 }
 
