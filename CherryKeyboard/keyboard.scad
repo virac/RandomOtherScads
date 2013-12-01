@@ -87,6 +87,8 @@ thumb_key_enable = [
 // 5 = 1x1.5 key vertical (bottom half)
 // 6 = 2x1 key horizontal (left half)
 // 7 = 2x1 key horizontal (right half)
+// 8 = 1.5x1 key horizontal (left half)
+// 9 = 1.5x1 key horizontal (right half)
 
 //col_shift = [0,0.2,0.5,0.7,0.5,0.2,0,0,0,0];
 module keyboard_keys(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
@@ -165,6 +167,18 @@ module patch_box(i,j,row_s,col_s) {
 				}// for( o = [-1,1] ) for( p = [-1,1] )
 }
 
+function key_width_half(i,j,enable) = (enable[i][j]==-1||enable[i][j]==0||enable[i][j]==1||
+						enable[i][j]==2 ||enable[i][j]==3||enable[i][j]==4||
+						enable[i][j]==5)?default_key_horiz_offset/2:((enable[i][j]==6||
+						enable[i][j]==7)?default_key_horiz_offset:((enable[i][j]==8||
+						enable[i][j]==9)?default_key_horiz_offset/2*3:0));
+function key_height_half(i,j,enable) = (enable[i][j]==-1||enable[i][j]==0||enable[i][j]==1||
+						enable[i][j]==6 ||enable[i][j]==7||enable[i][j]==8||
+						enable[i][j]==9)?default_key_vert_offset/2:((enable[i][j]==2||
+						enable[i][j]==7)?default_key_vert_offset:((enable[i][j]==4||
+						enable[i][j]==5)?default_key_vert_offset/2*3:0));
+						
+						
 function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][shift_z]-col_s[j][shift_z]);
 function key_row_tanslation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
 function key_col_tanslation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
