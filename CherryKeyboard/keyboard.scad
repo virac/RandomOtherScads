@@ -14,7 +14,7 @@ default_key_horiz_offset = default_key_size+default_key_horiz_space;
 default_key_vert_offset = default_key_size+default_key_vert_space;
 
 rows = 5;//5;
-cols = 7;//6;
+cols = 8;//6;
 
 thumb_rows = 3;
 thumb_cols = 3;
@@ -36,6 +36,7 @@ row_shift = [	[0,0,7,-20],
 					[0,0,0,0],
 					[0,0,0,0]];
 col_shift = [	[0,0,3,10],
+					[0,0,3,10],
 					[0,2,1,0],
 					[0,10,0,0],
 					[0,12,0,0],
@@ -58,16 +59,16 @@ thumb_col_shift = [
 thumb_offset_x = 70;
 thumb_offset_y = -50;
 
-center_key = [3,2];
+center_key = [4,2];
 thumb_center_key = [1,1];
 thumb_key_def_rot = [0,0,-30];
 patch_size = 1;
 
-key_enable = [	[1,1,1,1,1,0,0,0,0,0,0],
-					[1,1,1,1,1,1,4,0,0,0,0],
-					[1,1,1,1,1,1,-1,0,0,0,0],
-					[1,1,1,1,1,1,5,0,0,0,0],
-					[1,1,1,1,1,1,1,0,0,0,0],
+key_enable = [	[0,1,1,1,1,1,0,0,0,0,0],
+					[0,9,1,1,1,1,1,4,0,0,0],
+					[0,9,1,1,1,1,1,0,0,0,0],
+					[0,9,1,1,1,1,1,5,0,0,0],
+					[0,9,1,1,1,1,1,1,0,0,0],
 					[0,0,0,0,0,0,0,0,0,0,0],
 					[0,0,0,0,0,0,0,0,0,0,0]];
 
@@ -77,6 +78,7 @@ thumb_key_enable = [
 				[0,1,1,0,0,0,0],
 				[0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0]];
+
 
 //-1 = 1x1 blank (structure there but no keyswitch hole)
 // 0 = 1x1 no key
@@ -90,29 +92,83 @@ thumb_key_enable = [
 // 8 = 1.5x1 key horizontal (left half)
 // 9 = 1.5x1 key horizontal (right half)
 
-key_width_half_table =[	[-1,default_key_horiz_offset/2],
-								[0,default_key_horiz_offset/2],
-								[1,default_key_horiz_offset/2],
-								[2,default_key_horiz_offset/2],
-								[3,default_key_horiz_offset/2],
-								[4,default_key_horiz_offset/2],
-								[5,default_key_horiz_offset/2],
-								[6,default_key_horiz_offset],
-								[7,default_key_horiz_offset],
-								[8,default_key_horiz_offset/2*3],
-								[9,default_key_horiz_offset/2*3]];
-key_height_half_table =[[-1,default_key_horiz_offset/2],
-								[0,default_key_vert_offset/2],
-								[1,default_key_vert_offset/2],
-								[2,default_key_vert_offset],
-								[3,default_key_vert_offset],
-								[4,default_key_vert_offset/2*3],
-								[5,default_key_vert_offset/2*3],
-								[6,default_key_vert_offset/2],
-								[7,default_key_vert_offset/2],
-								[8,default_key_vert_offset/2],
-								[9,default_key_vert_offset/2]];
+key_width_half_table =[	[-1,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 0,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 1,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 2,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 3,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 4,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 5,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 6,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset		] ] ],
+								[ 7,[	[-1,default_key_horiz_offset		],
+										[ 1,default_key_horiz_offset/2	] ] ],
+								[ 8,[	[-1,default_key_horiz_offset/2	],
+										[ 1,default_key_horiz_offset/2*3	] ] ],
+								[ 9,[	[-1,default_key_horiz_offset/2*3	],
+										[ 1,default_key_horiz_offset/2	] ] ] ];
+key_height_half_table =[[-1,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 0,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 1,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 2,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset		] ] ],
+								[ 3,[	[-1,default_key_vert_offset		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 4,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2*3	] ] ],
+								[ 5,[	[-1,default_key_vert_offset/2*3	],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 6,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 7,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 8,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ],
+								[ 9,[	[-1,default_key_vert_offset/2		],
+										[ 1,default_key_vert_offset/2		] ] ] ];
 
+
+function find( val,tab,def,i=0) =  i>=len(tab)?def:(val==tab[i][0]?tab[i][1]:find(val,tab,def,i+1));
+
+
+key_width_half_def = default_key_horiz_offset/2;
+								//key,p,non_default value
+key_width_half_table2 = [	[6,[ 1,default_key_horiz_offset]],
+									[7,[-1,default_key_horiz_offset]],
+									[8,[ 1,default_key_horiz_offset/2*3]],
+									[9,[-1,default_key_horiz_offset/2*3]] ];
+
+
+key_height_half_def = default_key_vert_offset/2;
+								//key,o,non_default value
+key_height_half_table2 = [	[2,[ 1,default_key_vert_offset]],
+									[3,[-1,default_key_vert_offset]],
+									[4,[ 1,default_key_vert_offset/2*3]],
+									[5,[-1,default_key_vert_offset/2*3]] ];
+
+//v = find( 3,key_height_half_table2,default_key_vert_offset/2);
+//echo("vec v=",v);
+//echo(find(-1,[v],default_key_vert_offset/2));
+
+// 1 = 1x1 key
+// 2 = 1x2 key vertical (top half)
+// 3 = 1x2 key vertical (bottom half)
+// 4 = 1x1.5 key vertical (top half)
+// 5 = 1x1.5 key vertical (bottom half)
+// 6 = 2x1 key horizontal (left half)
+// 7 = 2x1 key horizontal (right half)
+// 8 = 1.5x1 key horizontal (left half)
+// 9 = 1.5x1 key horizontal (right half)
 //col_shift = [0,0.2,0.5,0.7,0.5,0.2,0,0,0,0];
 module keyboard_keys(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
 	for( i=[0:row-1] ) translate( key_row_tanslation( row_s,i ) )
@@ -133,12 +189,32 @@ module keyboard_keys(row,col,row_s,col_s,enabled,show_parts = [true,true,false,t
 							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}
 				if( enabled[i][j] == 4 ) {
-					translate([0,default_key_vert_offset/3,0])
+					translate([0,default_key_vert_offset/4,0])
 						scale([scale_xy,scale_xy,1]) 
 							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}
 				if( enabled[i][j] == 5 ) {
-					translate([0,-default_key_vert_offset/3,0])
+					translate([0,-default_key_vert_offset/4,0])
+						scale([scale_xy,scale_xy,1]) 
+							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
+				}
+				if( enabled[i][j] == 6 ) {
+					translate([default_key_vert_offset/2,0,0])
+						scale([scale_xy,scale_xy,1]) 
+							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
+				}
+				if( enabled[i][j] == 7 ) {
+					translate([-default_key_vert_offset/2,0,0])
+						scale([scale_xy,scale_xy,1]) 
+							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
+				}
+				if( enabled[i][j] == 8 ) {
+					translate([default_key_vert_offset/4,0,0])
+						scale([scale_xy,scale_xy,1]) 
+							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
+				}
+				if( enabled[i][j] == 9 ) {
+					translate([-default_key_vert_offset/4,0,0])
 						scale([scale_xy,scale_xy,1]) 
 							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}
@@ -166,7 +242,7 @@ module NbyN_patch(n,x,y) {
 						}
 }
 
-module patch_box(i,j,row_s,col_s) {
+module patch_box(i,j,row_s,col_s,enable) {
 	translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 					(default_key_vert_offset +default_key_vert_space )/2,
 					cherry_mx_mount_thickness/2] )
@@ -175,13 +251,13 @@ module patch_box(i,j,row_s,col_s) {
 				hull() {
 					for( o = [-1,1] ) for( p = [-1,1] ) { 
 						rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
-							translate([	o*default_key_horiz_offset/4,
-											p*default_key_vert_offset /4,0])
+							translate([	o*key_half(i,j,o,enable,key_width_half_table2,key_width_half_def)/2,
+											p*key_half(i,j,p,enable,key_height_half_table2,key_height_half_def)/2,0])
 								cube([default_key_horiz_offset/2,
 										default_key_vert_offset/2,
 										cherry_mx_mount_thickness],center=true);
-						translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2)+(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*get_h(i,j,row_s,col_s),
-										p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)- (p==1?max(sin(row_s[i][shift_rot]),0):min(sin(row_s[i][shift_rot]),0))*get_h(i,j,row_s,col_s),
+						translate([	o*half_between(key_half(i,j,o,enable,key_width_half_table2,key_width_half_def),cherry_mx_mount_width/2)+(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*get_h(i,j,row_s,col_s),
+										p*half_between(key_half(i,j,p,enable,key_height_half_table2,key_height_half_def),cherry_mx_mount_width/2)- (p==1?max(sin(row_s[i][shift_rot]),0):min(sin(row_s[i][shift_rot]),0))*get_h(i,j,row_s,col_s),
 										get_h(i,j,row_s,col_s)])
 						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
 								default_key_vert_offset/2 -cherry_mx_mount_width/2,
@@ -189,10 +265,20 @@ module patch_box(i,j,row_s,col_s) {
 					}//hull
 				}// for( o = [-1,1] ) for( p = [-1,1] )
 }
-function key_width_half(i,j,enable) = lookup(enable[i][j],key_width_half_table);
-function key_height_half(i,j,enable) = lookup(enable[i][j],key_height_half_table);
-						
-						
+function key_width_half(i,j,o,enable) = lookup(enable[i][j],key_width_half_table);
+function key_height_half(i,j,p,enable) = lookup(enable[i][j],key_height_half_table);
+//echo(v[search("p",v,1,0)[0]][1]);               // -> 3
+function def_search(table,def,s_str) = len(search(s_str,table,1,0))<1?def:search(s_str,table,1,0);
+
+function key_half(i,j,o,enable,table,def) = find(o,[find( enable[i][j],table,def)],def);
+function key_height_half2(i,j,p,enable,def) = find(p,
+		[find( enable[i][j],key_height_half_table2,key_height_half_def)],key_height_half_def);
+
+//key_height_half_table2[
+//			def_search(key_height_half_table2,str(enable[i][j],",",p),key_height_half_def)[0]][1];
+
+
+
 function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][shift_z]-col_s[j][shift_z]);
 function key_row_tanslation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
 function key_col_tanslation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
@@ -202,12 +288,12 @@ module key_patch_bottom(i,j,row_s,col_s,enable) {
 		translate( key_row_tanslation( row_s,i ) )
 			translate( key_col_tanslation( col_s,j ) ) 
 				for( o = [-1,1] ) for( p = [-1,1] ) {
-					translate([	o*half_between(default_key_horiz_offset/2,cherry_mx_mount_width/2) + 
+					translate([	o*half_between(key_half(i,j,o,enable,key_width_half_table2,key_width_half_def),cherry_mx_mount_width/2) + 
 										sin(col_s[j][shift_rot])*get_h(i,j,row_s,col_s),
-									p*half_between(default_key_vert_offset/2,cherry_mx_mount_width/2)-
+									p*half_between(key_half(i,j,p,enable,key_height_half_table2,key_height_half_def),cherry_mx_mount_width/2)-
 										sin(row_s[i][shift_rot])*get_h(i,j,row_s,col_s),
 									get_h(i,j,row_s,col_s)])
-						cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
+			#			cube([default_key_horiz_offset/2-cherry_mx_mount_width/2,
 								default_key_vert_offset/2 -cherry_mx_mount_width/2,
 								cherry_mx_mount_thickness], center = true);
 				}
@@ -251,7 +337,7 @@ module keyboard_main_plate() {
 	union() {
 		for( i=[0:rows-1] ) 
 			for( j = [0:cols-1] ) if( key_enable[i][j] != 0 ) {
-				patch_box(i,j,row_shift,col_shift);
+				patch_box(i,j,row_shift,col_shift,key_enable);
 			}
 	}
 }
@@ -264,7 +350,7 @@ module keyboard_thumb_plate() {
 							-thumb_center_key[1]*default_key_vert_offset,0])
 			for( i=[0:thumb_rows-1] ) 
 				for( j = [0:thumb_cols-1] ) if( thumb_key_enable[i][j] != 0 ) {
-					patch_box(i,j,thumb_row_shift,thumb_col_shift);
+					patch_box(i,j,thumb_row_shift,thumb_col_shift,thumb_key_enable);
 				}
 }
 
