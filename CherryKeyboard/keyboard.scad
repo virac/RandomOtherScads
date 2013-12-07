@@ -6,6 +6,11 @@ with_support = false;
 show_keyswitches = false;
 show_keycaps = false;
 
+stilts = true;
+attach_vert = true;
+attach_hoiz = true;
+attach_corner = true;
+
 default_key_size = cherry_mx_outer_width;
 default_key_horiz_space = 5;
 default_key_vert_space = 5;
@@ -212,7 +217,6 @@ module NbyN_patch(n,x,y) {
 										cherry_mx_mount_thickness],center = true);
 						}
 }
-stilts = true;
 
 module face_part( i,j,o,p,row_s,col_s,enable,thickness) {
 	rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
@@ -224,6 +228,29 @@ module face_part( i,j,o,p,row_s,col_s,enable,thickness) {
 				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def),
 						key_part(i,j,p,enable,key_height_part_table,key_height_part_def),
 						thickness],center=true);
+}
+
+module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
+	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
+		translate( key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j ) )
+			rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
+				translate([ key_part(i,j,0,enable,key_width_part_table,0),
+							key_part(i,j,0,enable,key_height_part_table,0),
+							0]) {//shift to center 
+					if( piece == 1 ) 
+						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)/2),
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),0])
+							cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def), 0.1, thickness],center=true);
+					if( piece == 2 ) 
+						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-0.05),
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2),0])
+							cube([0.1, key_part(i,j,p,enable,key_height_part_table,key_height_part_def), thickness],center=true);
+					if( piece == 3 ) 
+						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-0.05),
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),0])
+							cube([0.1, 0.1, thickness],center=true);
+				}
+	}
 }
 
 module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
@@ -240,15 +267,53 @@ module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
 
 module patch_box(i,j,row_s,col_s,enable,thickness) {
 	sliver_shift =  key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j );
-	translate( base_offset + key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j ) )
+	translate( base_offset + sliver_shift )
 			if( stilts == true ) {
-				for( o = [-1,1] ) for( p = [-1,1] ) { 
+				union() for( o = [-1,1] ) for( p = [-1,1] ) { 
+					translate(-sliver_shift) {
+						//colums are solid]
+						if( attach_vert == true ) hull() {
+							face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,1);
+							face_part_sliver( i+p,j  , o,-p,row_s,col_s,enable,thickness,1);
+						}					
+						//rows are solid
+						if( attach_hoiz == true ) hull() {
+							face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
+							face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+						}			
+						//corners are attached
+						if( attach_corner == true ) hull() {
+							face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
+							face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
+						}
+					}
 					hull() {
 						face_part( i,j,o,p,row_s,col_s,enable,thickness);
 						base_part( i,j,o,p,row_s,col_s,enable,thickness);
 					}//hull
 				}// for( o = [-1,1] ) for( p = [-1,1] )
 			} else {
+				union() {
+					for( o = [-1,1] ) for( p = [-1,1] ) { 
+						translate(-sliver_shift) {
+							//colums are solid]
+							if( attach_vert == true ) hull() {
+								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,1);
+								face_part_sliver( i+p,j  , o,-p,row_s,col_s,enable,thickness,1);
+							}					
+							//rows are solid
+							if( attach_hoiz == true ) hull() {
+								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
+								face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+							}			
+							//corners are attached
+							if( attach_corner == true ) hull() {
+								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
+								face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
+							}
+						}
+					}
+				}
 				hull() {
 					for( o = [-1,1] ) for( p = [-1,1] ) { 
 						face_part( i,j,o,p,row_s,col_s,enable,thickness);
