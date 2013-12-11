@@ -10,7 +10,7 @@ with_support = false;
 show_keyswitches = false;
 show_keycaps = false;
 
-stilts = true;
+stilts = false;
 attach_vert = true;
 attach_hoiz = true;
 attach_corner = true;
@@ -38,25 +38,25 @@ shift_rot = 3;
 
 
 row_shift = [	
-				[0,0,7,-20],
-				[0,0,1.5,-8],
-				[0,0,0,0],
-				[0,0,1,6.5],
-				[0,0,7,25],
+				[0,0,8,-20],
+				[0,0,2.5,-8],
+				[0,0,1,0],
+				[0,0,2,6.5],
+				[0,0,8,25],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
 col_shift = [	
-				[0,0,3,10],
-				[0,0,3,10],
-				[0,2,1,0],
-				[0,10,0,0],
-				[0,12,0,0],
-				[0,7,1,0],
-				[0,0,3,-10],
-				[0,0,8,-20],
+				[0,0,4,10],
+				[0,0,4,10],
+				[0,2,2,0],
+				[0,10,1,0],
+				[0,12,1,0],
+				[0,7,2,0],
+				[0,0,4,-10],
+				[0,0,9,-20],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
@@ -401,22 +401,51 @@ module patch_box(i,j,row_s,col_s,enable,thickness) {
 				}// for( o = [-1,1] ) for( p = [-1,1] )
 			} else {
 				union() {
-					for( o = [-1,1] ) for( p = [-1,1] ) { 
+					for( o = [-1,1] ) for( p = [-1,1] ) {
 						translate(-sliver_shift) {
 							//colums are solid]
 							if( attach_vert == true ) hull() {
-								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,1);
-								face_part_sliver( i+p,j  , o,-p,row_s,col_s,enable,thickness,1);
+								face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
+								 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
+								if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
+									face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+								} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
+									face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+								} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
+									face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+								} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
+									face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+								} else {
+									face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
+								}
+								base_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness);
+								base_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness);
 							}					
 							//rows are solid
 							if( attach_hoiz == true ) hull() {
 								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
-								face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+								
+								if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
+									face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+								} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
+									face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+								} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
+									face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+								} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
+									face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+								} else {
+									face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+								}
+								
+								base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
+								base_part_sliver( i  ,j+o,-o,p,row_s,col_s,enable,thickness);
 							}			
 							//corners are attached
 							if( attach_corner == true ) hull() {
 								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
 								face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
+								base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
+								base_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness);
 							}
 						}
 					}
@@ -526,24 +555,21 @@ module main_patch_bottom() {
 			for( i = [0:rows-1] )
 				for( j = [0:cols-1] ) 
 					key_patch_bottom(i,j,row_shift,col_shift,key_enable,cherry_mx_mount_thickness);
-		translate([0,0,-cherry_mx_mount_thickness/2])
-			screw_patch_bottom(screw_hole_offset,row_shift,col_shift,key_enable );
+		screw_patch_bottom(screw_hole_offset,row_shift,col_shift,key_enable );
 	}		
 }
 
 module thumb_patch_bottom() {
 	hull() {
-		translate([	0,0,cherry_mx_mount_thickness/2] + thumb_offset() )
+		translate( thumb_offset() )
 			rotate(thumb_key_def_rot) 
 				translate([	-thumb_center_key[0]*default_key_horiz_offset,
 							-thumb_center_key[1]*default_key_vert_offset,0]) {
-					translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-								(default_key_vert_offset +default_key_vert_space )/2,0])
+					translate(base_offset)
 						for( i = [0:thumb_rows-1] )
 							for( j = [0:thumb_cols-1] ) 
 								key_patch_bottom(i,j,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness);
-					translate([0,0,-cherry_mx_mount_thickness/2])
-						screw_patch_bottom(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable );
+					screw_patch_bottom(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable );
 				}
 	}
 }
@@ -551,17 +577,15 @@ module thumb_patch_bottom() {
 
 module function_patch_bottom() {
 	hull() {
-		translate([	0,0,cherry_mx_mount_thickness/2] + func_offset() )
+		translate(func_offset() )
 			rotate(func_key_def_rot) 
 				translate([	-func_center_key[0]*default_key_horiz_offset,
 							-func_center_key[1]*default_key_vert_offset,0]) {
-					translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-								(default_key_vert_offset +default_key_vert_space )/2,0])
+					translate(base_offset)
 						for( i = [0:func_rows-1] )
 							for( j = [0:func_cols-1] ) 
 								key_patch_bottom(i,j,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness);
-					translate([0,0,-cherry_mx_mount_thickness/2])
-						screw_patch_bottom(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable );
+					screw_patch_bottom(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable );
 				}
 	}		
 }
@@ -586,7 +610,7 @@ module keyboard_main_plate() {
 
 module keyboard_thumb_plate() {
 	union() {
-		translate( thumb_offset() )
+		translate(thumb_offset() )
 			rotate(thumb_key_def_rot) 
 				translate([	-thumb_center_key[0]*default_key_horiz_offset,
 							-thumb_center_key[1]*default_key_vert_offset,0]) {
@@ -601,7 +625,7 @@ module keyboard_thumb_plate() {
 
 module keyboard_function_plate() {
 	union() {
-		translate( func_offset() )
+		translate(func_offset() )
 			rotate(func_key_def_rot) 
 				translate([	-func_center_key[0]*default_key_horiz_offset,
 							-func_center_key[1]*default_key_vert_offset,0]) {
@@ -709,7 +733,12 @@ if( with_support == true ) {
 	}
 } else {
 	if( show_mirror== false) {
-		keyboard_plate();
+		intersection() {
+			keyboard_plate();
+			translate([ 5.1*default_key_horiz_offset,
+						-3*default_key_vert_offset,
+						-20] ) cube(184);
+			}
 	} else {
 		mirror([1,0,0])
 			keyboard_plate();
