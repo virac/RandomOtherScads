@@ -733,12 +733,12 @@ if( with_support == true ) {
 	}
 } else {
 	if( show_mirror== false) {
-		intersection() {
+		//intersection() {
 			keyboard_plate();
-			translate([ 5.1*default_key_horiz_offset,
-						-3*default_key_vert_offset,
-						-20] ) cube(184);
-			}
+	//		translate([ 5.1*default_key_horiz_offset,
+		//				-3*default_key_vert_offset,
+		//				-20] ) cube(184);
+			//}
 	} else {
 		mirror([1,0,0])
 			keyboard_plate();
