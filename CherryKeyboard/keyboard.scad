@@ -652,7 +652,7 @@ module keyboard_plate() {
 					patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,
 									thumb_offset(),thumb_key_def_rot,thumb_center_key);
 				if( with_func == true )
-					function_patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
+					patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
 									func_offset(),func_key_def_rot,func_center_key);
 			}
 			if( with_main == true )
@@ -715,22 +715,35 @@ module keyboard_screws_mount_hole( hole_offset, row_s, col_s, enable, offset = [
 				}
 }
 
+module keyboard_bottom_thing(thickness) {
+	hull() {
+		if( with_main == true )
+			patch_bottom(rows,cols,row_shift,col_shift,key_enable,thickness,screw_hole_offset);
+		if( with_thumb == true )
+			patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,thickness,thumb_screw_hole_offset,
+							thumb_offset(),thumb_key_def_rot,thumb_center_key);
+		if( with_func == true )
+			patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,thickness,func_screw_hole_offset,
+							func_offset(),func_key_def_rot,func_center_key);
+	}
+}
+
 module keyboard_bottom() {
 	difference() {
 		union() {
-			minkowski() {
-				hull() {
-					if( with_main == true )
-						patch_bottom(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness/2,screw_hole_offset);
-					if( with_thumb == true )
-						patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness/2,thumb_screw_hole_offset,
-										thumb_offset(),thumb_key_def_rot,thumb_center_key);
-					if( with_func == true )
-						patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness/2,func_screw_hole_offset,
-										func_offset(),func_key_def_rot,func_center_key);
+			translate([0,0,cherry_mx_mount_thickness/2]) difference() {
+				minkowski() {
+					keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+					//translate([0,0,cherry_mx_mount_thickness/2]) 
+						cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
 				}
-				//translate([0,0,cherry_mx_mount_thickness/2]) 
-					cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
+				translate([0,0,cherry_mx_mount_thickness/4])keyboard_bottom_thing(cherry_mx_mount_thickness*2);
+			}
+			
+			minkowski() {
+				keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+				// translate([0,0,cherry_mx_mount_thickness/2]) 
+					cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
 			}
 			union() {
 				keyboard_screws_mount(screw_hole_offset,row_shift,col_shift,key_enable,standoff_thickness);
@@ -758,13 +771,13 @@ if( with_support == true ) {
 	}
 } else {
 	if( show_mirror== false) {
+		//	keyboard_bottom();
 		//intersection() {
-		//	keyboard_plate();
+			translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) keyboard_plate();
 	//		translate([ 5.1*default_key_horiz_offset,
 		//				-3*default_key_vert_offset,
 		//				-20] ) cube(184);
 			//}
-			keyboard_bottom();
 	} else {
 		mirror([1,0,0])
 			keyboard_plate();
