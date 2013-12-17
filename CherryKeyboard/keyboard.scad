@@ -138,6 +138,7 @@ screw_hole_offset = [
 
 thumb_screw_hole_offset = [
 				[0,1,0],
+				[2.2,0.8,0],
 				[2,3,0] ];
 				
 func_screw_hole_offset = [
@@ -730,7 +731,7 @@ if( with_support == true ) {
 	}
 } else {
 	if( show_mirror== false) {
-		//	keyboard_bottom();
+			keyboard_bottom();
 		//intersection() {
 			translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) keyboard_plate();
 	//		translate([ 5.1*default_key_horiz_offset,
