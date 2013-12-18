@@ -208,8 +208,8 @@ key_height_part_table = [	[2,[[-1,default_key_vert_offset],
 // 9 = 1.5x1 key horizontal (right half)
 //col_shift = [0,0.2,0.5,0.7,0.5,0.2,0,0,0,0];
 module keyboard_key(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
-	for( i=[0:row-1] ) translate( key_row_tanslation( row_s,i ) )
-		for( j = [0:col-1] ) translate( key_col_tanslation( col_s,j ) ) 
+	for( i=[0:row-1] ) 
+		for( j = [0:col-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
 			rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0]) {
 				if( enabled[i][j] == 1 ) {
 					scale([scale_xy,scale_xy,1]) 
@@ -264,8 +264,7 @@ module NbyN_patch(n,x,y) {
 					cherry_mx_mount_thickness/2] )
 		for( i = [max(floor(x-(n-1)/2),0):min(ceil(x+(n-1)/2),rows-1)] )
 			for( j = [max(floor(y-(n-1)/2),0):min(ceil(y+(n-1)/2),cols-1)] ) 
-				translate( key_row_tanslation( row_s,i ) )
-					translate( key_col_tanslation( col_s,j ) ) 
+				translate( key_translation( i,j,row_s,col_s ) ) 
 						union() {
 							rotate([row_shift[i][shift_rot],0,0]) rotate([0,col_shift[j][shift_rot],0])
 								cube([default_key_horiz_offset,
@@ -292,7 +291,7 @@ module face_part( i,j,o,p,row_s,col_s,enable,thickness) {
 
 module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
 	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
-		translate( key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j ) )
+		translate( key_translation( i, j, row_s, col_s ) )
 			rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
 				translate([ key_part(i,j,0,enable,key_width_part_table,0),
 							key_part(i,j,0,enable,key_height_part_table,0),
@@ -315,7 +314,7 @@ module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
 
 module base_part_sliver( i,j,o,p,row_s,col_s,enable,thickness) {
 	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
-		translate( key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j ) )
+		translate( key_translation( i,j,row_s,col_s ) )
 			base_part( i,j,o,p,row_s,col_s,enable,thickness);
 	}
 }
@@ -346,7 +345,7 @@ module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
 }
 
 module patch_box(i,j,row_s,col_s,enable,thickness) {
-	sliver_shift =  key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j );
+	sliver_shift =  key_translation( i, j, row_s, col_s );
 	translate( base_offset + sliver_shift )
 			if( stilts == true ) {
 				union() for( o = [-1,1] ) for( p = [-1,1] ) { 
@@ -464,15 +463,21 @@ module patch_box(i,j,row_s,col_s,enable,thickness) {
 function key_part(i,j,q,enable,table,def) = find(q,find( enable[i][j],table,def),def);
 
 function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][shift_z]-col_s[j][shift_z]);
-function key_row_tanslation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
-function key_col_tanslation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
+function key_row_translation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
+function key_col_translation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
 
-function key_row_tans_noZ( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,0 ];
-function key_col_tans_noZ( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],0 ];
+function key_translation( i, j, row_s, col_s ) =	[ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ] + 
+													[j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
+
+function key_row_trans_noZ( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,0 ];
+function key_col_trans_noZ( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],0 ];
+
+function key_trans_noZ( i, j, row_s, col_s ) = 	[ row_s[i][shift_x],i*default_key_vert_offset,0 ] +
+												[j*default_key_horiz_offset,col_s[j][shift_y],0 ];
 
 module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
 	if( enable[i][j] != 0 ) hull() {
-		translate( key_row_tanslation( row_s,i ) + key_col_tanslation( col_s,j ) ) 
+		translate( key_translation( i,j,row_s,col_s ) ) 
 			for( o = [-1,1] ) for( p = [-1,1] ) {
 				translate([ key_part(i,j,0,enable,key_width_part_table,0),
 							key_part(i,j,0,enable,key_height_part_table,0),
@@ -518,8 +523,7 @@ module keyboard_screws(hole_offset,row_s,col_s,enable, offset = [0,0,0], key_rot
 						-center_key[1]*default_key_vert_offset,0]) { 
 				union() {
 					for( i=[0:len(hole_offset)-1] )
-						translate( 	key_row_tans_noZ( row_s,hole_offset[i][0] )+
-									key_col_tans_noZ( col_s,hole_offset[i][1] )+
+						translate( key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							rotate([0,0,hole_offset[i][2]])
 								cylinder( r = m3_nut_diameter/2, h = 30, $fn = 6 );
@@ -538,8 +542,7 @@ module keyboard_screws(hole_offset,row_s,col_s,enable, offset = [0,0,0], key_rot
 module keyboard_screw_mounts(hole_offset,row_s,col_s,enable ) {
 	union() {
 		for( i=[0:len(hole_offset)-1] )
-			translate( 	key_row_tans_noZ( row_s,hole_offset[i][0] )+
-						key_col_tans_noZ( col_s,hole_offset[i][1] )+
+			translate( key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 						[default_key_horiz_space/2,default_key_vert_space/2,-cherry_mx_mount_bottom_thickness])  {
 				cylinder( r = m3_nut_diameter*3/4, h = cherry_mx_mount_bottom_thickness+m3_nut_thickness );
 			}
@@ -549,8 +552,7 @@ module keyboard_screw_mounts(hole_offset,row_s,col_s,enable ) {
 module screw_patch_bottom(hole_offset,row_s,col_s,enable,thickness ) {
 	hull() {
 		for( i=[0:len(hole_offset)-1] )
-			translate( 	key_row_tans_noZ( row_s,hole_offset[i][0] )+
-						key_col_tans_noZ( col_s,hole_offset[i][1] )+
+			translate( key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 						[default_key_horiz_space/2,default_key_vert_space/2,-cherry_mx_mount_bottom_thickness+cherry_mx_mount_thickness/2-thickness/2])  {
 				cylinder( r = m3_nut_diameter*3/4, h = thickness );
 			}
@@ -647,8 +649,7 @@ module keyboard_screws_mount( hole_offset, row_s, col_s, enable,thickness, offse
 						-center_key[1]*default_key_vert_offset,0])
 				union() {
 					for( i=[0:len(hole_offset)-1] )
-						translate( 	key_row_tans_noZ( row_s,hole_offset[i][0] )+
-									key_col_tans_noZ( col_s,hole_offset[i][1] )+
+						translate( 	key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							translate([0,0,-cherry_mx_mount_bottom_thickness+cherry_mx_mount_thickness-0.1]) {
 								cylinder( r = m3_diameter, h = thickness, $fn = 30 );
@@ -666,8 +667,7 @@ module keyboard_screws_mount_hole( hole_offset, row_s, col_s, enable, offset = [
 						-center_key[1]*default_key_vert_offset,0])
 				union() {
 					for( i=[0:len(hole_offset)-1] )
-						translate( 	key_row_tans_noZ( row_s,hole_offset[i][0] )+
-									key_col_tans_noZ( col_s,hole_offset[i][1] )+
+						translate( key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							translate([0,0,-cherry_mx_mount_bottom_thickness-0.1])
 								cylinder( r = m3_diameter/2, h = 30, $fn = 30 ); // hole
@@ -723,6 +723,11 @@ module keyboard_bottom() {
 	}
 }
 
+module keyboard_top() {
+
+
+}
+
 if( with_support == true ) {
 	rotate([180,0,0]) {
 	//	keyboard_plate(rows,cols);
@@ -759,9 +764,9 @@ if( with_support == true ) {
 	
 	if( show_keycaps == true ) {
 		for( i=[0:rows-1] ) {
-			translate( key_row_tanslation( row_shift,i )+[1.5,0,0] )
+			translate( key_row_translation( row_shift,i )+[1.5,0,0] )
 				for( j = [0:cols-1] ) {
-					translate( key_col_tanslation( col_shift,j )+[0,1.5,cherry_mx_top_thickness+cherry_mx_keycap_buffer] ) 
+					translate( key_col_translation( col_shift,j )+[0,1.5,cherry_mx_top_thickness+cherry_mx_keycap_buffer] ) 
 						rotate([row_shift[i][shift_rot],0,0]) rotate([0,col_shift[j][shift_rot],0])
 							translate([0,0,3.6 ])
 								color("Brown") import("includes/Key_fixed.stl");
