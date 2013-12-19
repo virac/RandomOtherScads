@@ -157,7 +157,6 @@ func_screw_hole_offset = [
 // 7 = 2x1 key horizontal (right half)
 // 8 = 1.5x1 key horizontal (left half)
 // 9 = 1.5x1 key horizontal (right half)
-function find( val,tab,def,i=0) =  i>=len(tab)?def:(val==tab[i][0]?tab[i][1]:find(val,tab,def,i+1));
 
 base_offset = [	(default_key_horiz_offset+default_key_horiz_space)/2,
 					(default_key_vert_offset +default_key_vert_space )/2,
@@ -460,20 +459,6 @@ module patch_box(i,j,row_s,col_s,enable,thickness) {
 				}//hull
 			}
 }
-function key_part(i,j,q,enable,table,def) = find(q,find( enable[i][j],table,def),def);
-
-function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][shift_z]-col_s[j][shift_z]);
-function key_row_translation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
-function key_col_translation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
-
-function key_translation( i, j, row_s, col_s ) =	[ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ] + 
-													[j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
-
-function key_row_trans_noZ( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,0 ];
-function key_col_trans_noZ( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],0 ];
-
-function key_trans_noZ( i, j, row_s, col_s ) = 	[ row_s[i][shift_x],i*default_key_vert_offset,0 ] +
-												[j*default_key_horiz_offset,col_s[j][shift_y],0 ];
 
 module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
 	if( enable[i][j] != 0 ) hull() {
@@ -781,3 +766,21 @@ function maximum1(a, i = 0) = (i < len(a) - 1) ? max(a[i][1], maximum0(a, i +1))
 function minimum(a, i = 0) = (i < len(a) - 1) ? min(a[i], maximum(a, i +1)) : a[i];
 function minimum0(a, i = 0) = (i < len(a) - 1) ? min(a[i][0], minimum0(a, i +1)) : a[i][0];
 function minimum1(a, i = 0) = (i < len(a) - 1) ? min(a[i][1], minimum0(a, i +1)) : a[i][1];
+
+function find( val,tab,def,i=0) =  i>=len(tab)?def:(val==tab[i][0]?tab[i][1]:find(val,tab,def,i+1));
+
+function key_part(i,j,q,enable,table,def) = find(q,find( enable[i][j],table,def),def);
+
+function get_h(i,j,row_s,col_s) = (-cherry_mx_mount_bottom_thickness+-row_s[i][shift_z]-col_s[j][shift_z]);
+
+function key_row_translation( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,row_s[i][shift_z] ];
+function key_col_translation( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],col_s[j][shift_z] ];
+
+function key_translation( i, j, row_s, col_s ) =	key_row_translation( row_s,i ) + 
+													key_col_translation( col_s,j );
+
+function key_row_trans_noZ( row_s,i ) = [ row_s[i][shift_x],i*default_key_vert_offset,0 ];
+function key_col_trans_noZ( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shift_y],0 ];
+
+function key_trans_noZ( i, j, row_s, col_s ) =	key_row_trans_noZ( row_s,i ) +
+												key_col_trans_noZ( col_s,j );
