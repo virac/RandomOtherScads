@@ -1,10 +1,13 @@
 include <bolts.scad>
 include <cherry_keyswitch.scad>
 
+show_plate = true;
+show_base = false;
+
 show_mirror = false;
 with_main = true;
 with_thumb = true;
-with_func = true;
+with_func = false;
 with_support = false;
 
 show_keyswitches = false;
@@ -24,7 +27,7 @@ default_key_vert_space = 5;
 default_key_horiz_offset = default_key_size+default_key_horiz_space;
 default_key_vert_offset = default_key_size+default_key_vert_space;
 
-rows = 5;//5;
+rows = 6;//5;
 cols = 8;//6;
 
 thumb_rows = 3;
@@ -45,7 +48,7 @@ row_shift = [
 				[0,0,1,0],
 				[0,0,2,6.5],
 				[0,0,8,25],
-				[0,0,0,0],
+				[0,0,8,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0],
@@ -112,7 +115,7 @@ key_enable = [
 				[0,9,1,1,1,1,1,0,0,0,0],
 				[0,9,1,1,1,1,1,5,0,0,0],
 				[0,9,1,1,1,1,1,1,0,0,0],
-				[0,0,0,0,0,0,0,0,0,0,0],
+				[0,1,1,1,1,1,1,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0]];
 
 thumb_key_enable = [
@@ -721,13 +724,17 @@ if( with_support == true ) {
 	}
 } else {
 	if( show_mirror== false) {
+		if( show_base == true ) {
 			keyboard_bottom();
-		//intersection() {
-			translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) keyboard_plate();
-	//		translate([ 5.1*default_key_horiz_offset,
-		//				-3*default_key_vert_offset,
-		//				-20] ) cube(184);
-			//}
+		}
+		if( show_plate == true ) {
+			intersection() {
+				translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) keyboard_plate();
+				translate([ 5.1*default_key_horiz_offset,
+						-3*default_key_vert_offset,
+						-20] ) cube(220);
+			}
+		}
 	} else {
 		mirror([1,0,0])
 			keyboard_plate();
