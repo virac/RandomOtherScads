@@ -729,15 +729,28 @@ if( with_support == true ) {
 		}
 		if( show_plate == true ) {
 			intersection() {
-				translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) keyboard_plate();
+				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+					keyboard_plate();
 				translate([ 5.1*default_key_horiz_offset,
 						-3*default_key_vert_offset,
 						-20] ) cube(220);
 			}
 		}
 	} else {
-		mirror([1,0,0])
-			keyboard_plate();
+		mirror([1,0,0]){
+			if( show_base == true ) {
+				keyboard_bottom();
+			}
+			if( show_plate == true ) {
+				intersection() {
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_plate();
+					translate([ 5.1*default_key_horiz_offset,
+							-3*default_key_vert_offset,
+							-20] ) cube(220);
+				}
+			}
+		}
 	}
 	if(show_keyswitches==true) {
 		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
