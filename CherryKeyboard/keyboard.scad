@@ -712,8 +712,18 @@ module keyboard_bottom() {
 }
 
 module keyboard_top() {
-
-
+	translate([0,0,cherry_mx_mount_thickness/2]) difference() {
+		minkowski() {
+			keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+			//translate([0,0,cherry_mx_mount_thickness/2]) 
+				cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
+		}
+		minkowski() {
+		keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+		// translate([0,0,cherry_mx_mount_thickness/2]) 
+			cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
+		}
+	}
 }
 
 if( with_support == true ) {
@@ -737,7 +747,7 @@ if( with_support == true ) {
 			}
 		}
 	} else {
-		mirror([1,0,0]){
+		mirror([1,0,0]) {
 			if( show_base == true ) {
 				keyboard_bottom();
 			}
