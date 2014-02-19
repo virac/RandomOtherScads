@@ -4,6 +4,8 @@ include <cherry_keyswitch.scad>
 show_plate = true;
 show_base = false;
 
+split_parts = false;
+
 show_mirror = false;
 with_main = true;
 with_thumb = true;
@@ -728,12 +730,17 @@ if( with_support == true ) {
 			keyboard_bottom();
 		}
 		if( show_plate == true ) {
-			intersection() {
+			if( split_parts == true ) {
+				intersection() {
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_plate();
+					translate([ 5.1*default_key_horiz_offset,
+							-3*default_key_vert_offset,
+							-20] ) cube(220);
+				}
+			} else {
 				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 					keyboard_plate();
-				translate([ 5.1*default_key_horiz_offset,
-						-3*default_key_vert_offset,
-						-20] ) cube(220);
 			}
 		}
 	} else {
@@ -742,12 +749,17 @@ if( with_support == true ) {
 				keyboard_bottom();
 			}
 			if( show_plate == true ) {
-				intersection() {
+				if( split_parts == true ) {
+					intersection() {
+						translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+							keyboard_plate();
+						translate([ 5.1*default_key_horiz_offset,
+								-3*default_key_vert_offset,
+								-20] ) cube(220);
+					}
+				} else {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 						keyboard_plate();
-					translate([ 5.1*default_key_horiz_offset,
-							-3*default_key_vert_offset,
-							-20] ) cube(220);
 				}
 			}
 		}
