@@ -3,6 +3,9 @@ include <cherry_keyswitch.scad>
 
 show_plate = true;
 show_base = false;
+show_top = false;
+
+split_parts = false;
 
 show_mirror = false;
 with_main = true;
@@ -137,7 +140,9 @@ screw_hole_offset = [
 				[4,4,0],
 				[2,6,0],
 				[4,6,0],
-				[4,8,0] ];
+				[4,8,0],
+				[6.1,2.8,0],
+				[6.1,5.2,0] ];
 
 thumb_screw_hole_offset = [
 				[0,1,0],
@@ -260,6 +265,57 @@ module keyboard_key(row,col,row_s,col_s,enabled,show_parts = [true,true,false,tr
 			}
 }
 
+
+module keyboard_keycap(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
+	for( i=[0:row-1] ) 
+		for( j = [0:col-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
+			rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0]) translate([-9,-9,3.6+cherry_mx_top_thickness+cherry_mx_keycap_buffer]) {
+				if( enabled[i][j] == 1 ) {
+					scale([scale_xy,scale_xy,1]) 
+						import("includes/Key_fixed.stl");
+				}	
+				if( enabled[i][j] == 2 ) {
+					translate([0,0,0])
+						scale([scale_xy,scale_xy*2,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 3 ) {
+					translate([0,-default_key_vert_offset,0])
+						scale([scale_xy,scale_xy*2,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 4 ) {
+					translate([0,0,0])
+						scale([scale_xy,scale_xy*1.5,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 5 ) {
+					translate([0,-default_key_vert_offset/2,0])
+						scale([scale_xy,scale_xy*1.5,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 6 ) {
+					translate([0,0,0])
+						scale([scale_xy*2,scale_xy,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 7 ) {
+					translate([-default_key_vert_offset,0,0])
+						scale([scale_xy*2,scale_xy,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 8 ) {
+					translate([default_key_vert_offset/4,0,0])
+						scale([scale_xy,scale_xy,1]) 
+							import("includes/Key_fixed.stl");
+				}
+				if( enabled[i][j] == 9 ) {
+					translate([-default_key_vert_offset/2,0,0])
+						scale([scale_xy*1.5,scale_xy,1]) 
+							import("includes/Key_fixed.stl");
+				}
+			}
+}
 module NbyN_patch(n,x,y) {
 	translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 					(default_key_vert_offset +default_key_vert_space )/2,
@@ -555,7 +611,7 @@ module patch_bottom(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset 
 							-center_key[1]*default_key_vert_offset,0]) {
 					translate(base_offset)
 						for( i = [0:row_n-1] )
-							for( j = [0:col_n-1] ) 
+							for( j = [0:col_n-1] ) if( isBorder(i,j,row_n-1,col_n-1,enable) )
 								key_patch_bottom(i,j,row_s,col_s,enable,thickness);
 					screw_patch_bottom(hole_offset,row_s,col_s,enable,thickness );
 				}
@@ -679,49 +735,63 @@ module keyboard_bottom_thing(thickness) {
 module keyboard_bottom() {
 	difference() {
 		union() {
-			translate([0,0,cherry_mx_mount_thickness/2]) difference() {
 				minkowski() {
 					keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-					//translate([0,0,cherry_mx_mount_thickness/2]) 
-						cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
-				}
-				translate([0,0,cherry_mx_mount_thickness/4])keyboard_bottom_thing(cherry_mx_mount_thickness*2);
+				cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
 			}
 			
+			translate([0,0,cherry_mx_mount_thickness/2]) difference() {
 			minkowski() {
 				keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-				// translate([0,0,cherry_mx_mount_thickness/2]) 
-					cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
+					cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
 			}
+				translate([0,0,cherry_mx_mount_thickness/4])
+					keyboard_bottom_thing(cherry_mx_mount_thickness+0.2);
+			}
+			
 			union() {
+				if( with_main == true )
 				keyboard_screws_mount(screw_hole_offset,row_shift,col_shift,key_enable,standoff_thickness);
+				if( with_thumb == true )
 				keyboard_screws_mount(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,standoff_thickness,
 										thumb_offset(),thumb_key_def_rot,thumb_center_key);
+				if( with_func == true )
 				keyboard_screws_mount(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,standoff_thickness,
 										func_offset(),func_key_def_rot,func_center_key);
 			}
 		}
 		union() {
+			if( with_main == true )
 			keyboard_screws_mount_hole(screw_hole_offset,row_shift,col_shift,key_enable);
+			if( with_thumb == true )
 			keyboard_screws_mount_hole(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
 									thumb_offset(),thumb_key_def_rot,thumb_center_key);
+			if( with_func == true )
 			keyboard_screws_mount_hole(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,
 									func_offset(),func_key_def_rot,func_center_key);
 			}
 	}
 }
+module keyboard_top_band(thickness) {
+	difference() {
+		minkowski() {
+			keyboard_bottom_thing(thickness/2);
+			cylinder( r = m3_diameter*1.5, h = thickness/2 );
+		}
+		translate([0,0,-0.1]) minkowski() {
+			keyboard_bottom_thing(thickness/2);
+			cylinder( r = m3_diameter, h = thickness/2+0.2 );
+		}
+	}
+}
 
 module keyboard_top() {
-	translate([0,0,cherry_mx_mount_thickness/2]) difference() {
-		minkowski() {
-			keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-			//translate([0,0,cherry_mx_mount_thickness/2]) 
-				cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
-		}
-		minkowski() {
-		keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-		// translate([0,0,cherry_mx_mount_thickness/2]) 
-			cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
+	step = 1 ;
+	translate([0,0,cherry_mx_mount_thickness/2]) {
+		#keyboard_top_band(cherry_mx_mount_thickness);
+		for( i = [0:step:cherry_mx_mount_bottom_thickness+standoff_thickness+cherry_mx_mount_thickness] ) {
+			translate([0,0,cherry_mx_mount_thickness/2+i+step/2])
+				keyboard_top_band(step);
 		}
 	}
 }
@@ -738,6 +808,7 @@ if( with_support == true ) {
 			keyboard_bottom();
 		}
 		if( show_plate == true ) {
+			if( split_parts == true ) {
 			intersection() {
 				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 					keyboard_plate();
@@ -745,6 +816,14 @@ if( with_support == true ) {
 						-3*default_key_vert_offset,
 						-20] ) cube(220);
 			}
+			} else {
+				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+					keyboard_plate();
+			}
+		}
+		if( show_top == true ) {
+			translate([0,0,cherry_mx_mount_thickness/2])
+				keyboard_top();
 		}
 	} else {
 		mirror([1,0,0]) {
@@ -752,6 +831,7 @@ if( with_support == true ) {
 				keyboard_bottom();
 			}
 			if( show_plate == true ) {
+				if( split_parts == true ) {
 				intersection() {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 						keyboard_plate();
@@ -759,10 +839,15 @@ if( with_support == true ) {
 							-3*default_key_vert_offset,
 							-20] ) cube(220);
 				}
+				} else {
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_plate();
 			}
 		}
 	}
-	if(show_keyswitches==true) {
+	}
+	if(show_keyswitches==true) 
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) {
 		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 						(default_key_vert_offset +default_key_vert_space )/2,0])
 			color("Blue") keyboard_key(rows,cols,row_shift,col_shift,key_enable);
@@ -777,16 +862,31 @@ if( with_support == true ) {
 											thumb_row_shift,thumb_col_shift,thumb_key_enable);
 	}
 	
-	if( show_keycaps == true ) {
-		for( i=[0:rows-1] ) {
-			translate( key_row_translation( row_shift,i )+[1.5,0,0] )
-				for( j = [0:cols-1] ) {
-					translate( key_col_translation( col_shift,j )+[0,1.5,cherry_mx_top_thickness+cherry_mx_keycap_buffer] ) 
-						rotate([row_shift[i][shift_rot],0,0]) rotate([0,col_shift[j][shift_rot],0])
-							translate([0,0,3.6 ])
-								color("Brown") import("includes/Key_fixed.stl");
-				}
-		}
+	if( show_keycaps == true ) translate([0,0,standoff_thickness+cherry_mx_mount_thickness]){
+			if( with_main == true )
+		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
+						(default_key_vert_offset +default_key_vert_space )/2,0])
+			color("Brown") keyboard_keycap(rows,cols,row_shift,col_shift,key_enable);
+
+			if( with_thumb == true )
+		translate( thumb_offset() )
+			rotate(thumb_key_def_rot) 
+				translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
+								(default_key_vert_offset +default_key_vert_space )/2,0])
+					translate([	-thumb_center_key[0]*default_key_horiz_offset,
+									-thumb_center_key[1]*default_key_vert_offset,0])
+						color("Brown") keyboard_keycap(thumb_rows,thumb_cols,
+											thumb_row_shift,thumb_col_shift,thumb_key_enable);
+			
+		// for( i=[0:rows-1] ) {
+			// translate( key_row_translation( row_shift,i )+[1.5,0,0] )
+				// for( j = [0:cols-1] ) {
+					// translate( key_col_translation( col_shift,j )+[0,1.5,cherry_mx_top_thickness+cherry_mx_keycap_buffer] ) 
+						// rotate([row_shift[i][shift_rot],0,0]) rotate([0,col_shift[j][shift_rot],0])
+							// translate([0,0,3.6 ])
+								// color("Brown") import("includes/Key_fixed.stl");
+				// }
+		//}
 	
 	}
 }
@@ -814,3 +914,9 @@ function key_col_trans_noZ( col_s,j ) = [j*default_key_horiz_offset,col_s[j][shi
 
 function key_trans_noZ( i, j, row_s, col_s ) =	key_row_trans_noZ( row_s,i ) +
 												key_col_trans_noZ( col_s,j );
+												
+function isBorder( i,j, r,c, enable ) =  (i==0||i==r||j==0||j==c)?true:
+											(i==1 && enable[0][j] == 0)?true:
+											(i==r-1 && enable[r][j] == 0)?true:
+											(j==1 && enable[i][0] == 0)?true:
+											(j==c-1 && enable[i][c] == 0)?true:false;
