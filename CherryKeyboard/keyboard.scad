@@ -3,7 +3,7 @@ include <cherry_keyswitch.scad>
 
 show_plate = true;
 show_base = false;
-show_top = false;
+show_top = true;
 
 split_parts = false;
 
@@ -13,8 +13,8 @@ with_thumb = true;
 with_func = false;
 with_support = false;
 
-show_keyswitches = false;
-show_keycaps = false;
+show_keyswitches = true;
+show_keycaps = true;
 
 stilts = false;
 attach_vert = true;
@@ -46,38 +46,38 @@ shift_rot = 3;
 
 
 row_shift = [	
-				[0,0,8,-20],
-				[0,0,2.5,-8],
-				[0,0,1,0],
-				[0,0,2,6.5],
-				[0,0,8,25],
-				[0,0,8,0],
+				[0,0,7,-20],
+				[0,0,1.5,-8],
+				[0,0,0,0],
+				[0,0,1,6.5],
+				[0,0,7,25],
+				[0,0,7,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
 col_shift = [	
-				[0,0,4,10],
-				[0,0,4,10],
-				[0,2,2,0],
-				[0,10,1,0],
-				[0,12,1,0],
-				[0,7,2,0],
-				[0,0,4,-10],
-				[0,0,9,-20],
+				[0,0,3,10],
+				[0,0,3,10],
+				[0,2,1,0],
+				[0,10,0,0],
+				[0,12,0,0],
+				[0,7,1,0],
+				[0,0,3,-10],
+				[0,0,8,-20],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
 
 thumb_row_shift = [
-				[0,0,1,0],
-				[0,0,1,0],
-				[0,0,4,15],
+				[0,0,2,0],
+				[0,0,2,0],
+				[0,0,5,15],
 				[0,0,0,0] ];
 thumb_col_shift = [	
-				[0,0,2.8,10],
-				[0,0,1,0],
-				[0,0,2.8,-10],
+				[0,0,3.8,10],
+				[0,0,2,0],
+				[0,0,3.8,-10],
 				[0,0,0,0] ];
 				
 				
@@ -335,15 +335,15 @@ module NbyN_patch(n,x,y) {
 						}
 }
 
-module face_part( i,j,o,p,row_s,col_s,enable,thickness) {
+module face_part( i,j,o,p,row_s,col_s,enable,thickness,enlarge=1.0,extend = 0.0) {
 	rotate([row_s[i][shift_rot],0,0]) rotate([0,col_s[j][shift_rot],0])
 		translate([ key_part(i,j,0,enable,key_width_part_table,0),
 					key_part(i,j,0,enable,key_height_part_table,0),
 					0]) //shift to center
 			translate([	o*key_part(i,j,o,enable,key_width_part_table,key_width_part_def)/2,
-						p*key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2,0])
-				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def),
-						key_part(i,j,p,enable,key_height_part_table,key_height_part_def),
+						p*key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2,extend])
+				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def) * enlarge,
+						key_part(i,j,p,enable,key_height_part_table,key_height_part_def) * enlarge,
 						thickness],center=true);
 }
 
@@ -400,6 +400,66 @@ module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
 					thickness], center = true);
 
 		}
+}
+
+module patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend) {
+	sliver_shift =  key_translation( i, j, row_s, col_s );
+	translate( base_offset + sliver_shift ) union() {
+	/*	for( o = [-1,1] ) for( p = [-1,1] ) {
+			translate(-sliver_shift) {
+				//colums are solid]
+				if( attach_vert == true ) hull() {
+					face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
+					 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
+					if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
+						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
+						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
+						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
+						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else {
+						face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					}
+				//	base_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness);
+				//	base_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness);
+				}					
+				//rows are solid
+				if( attach_hoiz == true ) hull() {
+					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
+					
+					if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
+						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
+						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
+						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
+						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+					} else {
+						face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+					}
+					
+				//	base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
+				//	base_part_sliver( i  ,j+o,-o,p,row_s,col_s,enable,thickness);
+				}			
+				//corners are attached
+				if( attach_corner == true ) hull() {
+					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
+					face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
+				//	base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
+				//	base_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness);
+				}
+			}
+		}*/
+		hull() {
+			for( o = [-1,1] ) for( p = [-1,1] ) { 
+				face_part( i,j,o,p,row_s,col_s,enable,thickness,enlargement,extend);
+			//	base_part( i,j,o,p,row_s,col_s,enable,thickness);
+			}// for( o = [-1,1] ) for( p = [-1,1] )
+		}//hull
+	}
 }
 
 module patch_box(i,j,row_s,col_s,enable,thickness) {
@@ -535,22 +595,22 @@ module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
 								// key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
 								// thickness], center = true);
 
-			translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
-							sin(col_s[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
-						p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-							sin(row_s[i][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
-						get_h(i,j,row_s,col_s)])
-				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
-					key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
-					thickness], center = true);
-			translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
-							(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
-						p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-							(p==1?max(sin(row_s[i][shift_rot]),0):min(sin(row_s[i][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
-						get_h(i,j,row_s,col_s)])
-				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
-					key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
-					thickness], center = true);
+				translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
+								sin(col_s[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+							p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
+								sin(row_s[i][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+							get_h(i,j,row_s,col_s)])
+					cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
+						key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
+						thickness], center = true);
+				translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
+								(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+							p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
+								(p==1?max(sin(row_s[i][shift_rot]),0):min(sin(row_s[i][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+							get_h(i,j,row_s,col_s)])
+					cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
+						key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
+						thickness], center = true);
 
 				}
 			}
@@ -616,6 +676,36 @@ module patch_bottom(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset 
 					screw_patch_bottom(hole_offset,row_s,col_s,enable,thickness );
 				}
 	}		
+}
+
+module keyboard_top_part(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+	union() {
+		translate(offset )
+			rotate(key_rot) 
+				translate([	-center_key[0]*default_key_horiz_offset,
+							-center_key[1]*default_key_vert_offset,0]) {
+						for( i = [0:row_n-1] )
+							for( j = [0:col_n-1] )  if( enable[i][j] != 0 && isBorder(i,j,row_n-1,col_n-1,enable) ) {
+								patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend);
+						}
+				}
+	}
+}
+
+module keyboard_top_hole(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+	union() {
+		translate(offset )
+			rotate(key_rot) 
+				translate([	-center_key[0]*default_key_horiz_offset,
+							-center_key[1]*default_key_vert_offset,0]) {
+						for( i = [0:row_n-1] )
+							for( j = [0:col_n-1] )  if( enable[i][j] != 0 /*&& isBorder(i,j,row_n-1,col_n-1,enable)*/ ) hull() {
+								translate(base_offset)
+									key_patch_bottom(i,j,row_s,col_s,enable,thickness);
+								patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend);
+						}
+				}
+	}
 }
 
 module keyboard_plate_part(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
@@ -732,66 +822,188 @@ module keyboard_bottom_thing(thickness) {
 	}
 }
 
+module keyboard_bottom_main(thickness) {
+	hull() {
+		if( with_main == true )
+			patch_bottom(rows,cols,row_shift,col_shift,key_enable,thickness,screw_hole_offset);
+	}
+}
+module keyboard_bottom_thumb(thickness) {
+	hull() {
+		if( with_thumb == true )
+			patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,thickness,thumb_screw_hole_offset,
+							thumb_offset(),thumb_key_def_rot,thumb_center_key);
+	}
+}
+module keyboard_bottom_func(thickness) {
+	hull() {
+		if( with_func == true )
+			patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,thickness,func_screw_hole_offset,
+							func_offset(),func_key_def_rot,func_center_key);
+	}
+}
+
 module keyboard_bottom() {
 	difference() {
 		union() {
-				minkowski() {
-					keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-				cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
+			minkowski() {
+				keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+				translate([0,0,-cherry_mx_mount_thickness/4]) cylinder( r = m3_diameter*1.5, h = cherry_mx_mount_thickness/2 );
 			}
 			
 			translate([0,0,cherry_mx_mount_thickness/2]) difference() {
-			minkowski() {
-				keyboard_bottom_thing(cherry_mx_mount_thickness/2);
-					cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
-			}
+				minkowski() {
+					keyboard_bottom_thing(cherry_mx_mount_thickness/2);
+					translate([0,0,-cherry_mx_mount_thickness/4]) cylinder( r = m3_diameter, h = cherry_mx_mount_thickness/2 );
+				}
 				translate([0,0,cherry_mx_mount_thickness/4])
 					keyboard_bottom_thing(cherry_mx_mount_thickness+0.2);
 			}
 			
 			union() {
 				if( with_main == true )
-				keyboard_screws_mount(screw_hole_offset,row_shift,col_shift,key_enable,standoff_thickness);
+					keyboard_screws_mount(screw_hole_offset,row_shift,col_shift,key_enable,standoff_thickness);
 				if( with_thumb == true )
-				keyboard_screws_mount(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,standoff_thickness,
-										thumb_offset(),thumb_key_def_rot,thumb_center_key);
+					keyboard_screws_mount(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,standoff_thickness,
+											thumb_offset(),thumb_key_def_rot,thumb_center_key);
 				if( with_func == true )
-				keyboard_screws_mount(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,standoff_thickness,
-										func_offset(),func_key_def_rot,func_center_key);
+					keyboard_screws_mount(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,standoff_thickness,
+											func_offset(),func_key_def_rot,func_center_key);
 			}
 		}
 		union() {
 			if( with_main == true )
-			keyboard_screws_mount_hole(screw_hole_offset,row_shift,col_shift,key_enable);
+				keyboard_screws_mount_hole(screw_hole_offset,row_shift,col_shift,key_enable);
 			if( with_thumb == true )
-			keyboard_screws_mount_hole(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
-									thumb_offset(),thumb_key_def_rot,thumb_center_key);
+				keyboard_screws_mount_hole(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
+										thumb_offset(),thumb_key_def_rot,thumb_center_key);
 			if( with_func == true )
-			keyboard_screws_mount_hole(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,
-									func_offset(),func_key_def_rot,func_center_key);
-			}
+				keyboard_screws_mount_hole(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,
+										func_offset(),func_key_def_rot,func_center_key);
+		}
 	}
 }
-module keyboard_top_band(thickness) {
+
+module keyboard_top_band(thickness,growAdd, growRemove) {
 	difference() {
 		minkowski() {
 			keyboard_bottom_thing(thickness/2);
-			cylinder( r = m3_diameter*1.5, h = thickness/2 );
+			translate([0,0,-thickness/4]) cylinder( r = growAdd, h = thickness/2 );
 		}
 		translate([0,0,-0.1]) minkowski() {
 			keyboard_bottom_thing(thickness/2);
-			cylinder( r = m3_diameter, h = thickness/2+0.2 );
+			translate([0,0,-thickness/4]) cylinder( r = growRemove, h = thickness/2+0.2 );
+		}
+	}
+}
+
+module keyboard_top_band_main(thickness,growAdd, growRemove) {
+	if( with_main == true ) difference() {
+		minkowski() {
+			keyboard_bottom_main(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growAdd, h = thickness/2 );
+		}
+		translate([0,0,-0.1]) minkowski() {
+			keyboard_bottom_main(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growRemove, h = thickness/2+0.2 );
+		}
+	}
+}
+
+module keyboard_top_band_thumb(thickness,growAdd, growRemove) {
+	if( with_thumb == true ) difference() {
+		minkowski() {
+			keyboard_bottom_thumb(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growAdd, h = thickness/2 );
+		}
+		translate([0,0,-0.1]) minkowski() {
+			keyboard_bottom_thumb(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growRemove, h = thickness/2+0.2 );
+		}
+	}
+}
+
+module keyboard_top_band_func(thickness,growAdd, growRemove) {
+	if( with_func == true ) difference() {
+		minkowski() {
+			keyboard_bottom_func(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growAdd, h = thickness/2 );
+		}
+		translate([0,0,-0.1]) minkowski() {
+			keyboard_bottom_func(thickness/2);
+			translate([0,0,-thickness/4]) cylinder( r = growRemove, h = thickness/2+0.2 );
 		}
 	}
 }
 
 module keyboard_top() {
-	step = 1 ;
-	translate([0,0,cherry_mx_mount_thickness/2]) {
-		#keyboard_top_band(cherry_mx_mount_thickness);
-		for( i = [0:step:cherry_mx_mount_bottom_thickness+standoff_thickness+cherry_mx_mount_thickness] ) {
-			translate([0,0,cherry_mx_mount_thickness/2+i+step/2])
-				keyboard_top_band(step);
+	step = 18 ;
+	stepMain = 10 ;
+	stepThumb = 7 ;
+	stepFunc = 10 ;
+	enlargementAdd = 1.5 ;
+	extendAdd = 0 ;
+	enlargementRemove = 0.8 ;
+	extendRemove = 20 ;
+	topOffset = [0,0,20];
+	
+	topAdd = m3_diameter*1.5 ;
+	topThickness = 2 ;
+	
+	
+	translate([0,0,cherry_mx_mount_thickness/2]) 
+		keyboard_top_band(cherry_mx_mount_thickness,topAdd,topAdd - topThickness);
+	//	for( i = [0:step:cherry_mx_mount_bottom_thickness+standoff_thickness+cherry_mx_mount_thickness] ) {
+	translate([0,0,cherry_mx_mount_thickness+step/2])
+		keyboard_top_band(step,topAdd,topAdd - topThickness);
+//}
+	difference() {
+		hull() {
+			translate([0,0,cherry_mx_mount_thickness+step/2])
+				keyboard_top_band(step,topAdd,topAdd - topThickness);
+			translate([0,0,cherry_mx_mount_thickness+step+stepMain/2])
+				keyboard_top_band_main(stepMain,0.1,- topThickness);
+			translate([0,0,cherry_mx_mount_thickness+step+stepThumb/2])
+				keyboard_top_band_thumb(stepThumb,0.1,- topThickness);
+			translate([0,0,cherry_mx_mount_thickness+step+stepFunc/2])
+				keyboard_top_band_func(stepFunc,0.1,- topThickness);
+			*translate([0,0,standoff_thickness+cherry_mx_mount_thickness]){
+				if( with_main == true )
+					keyboard_top_part(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,enlargementAdd,extendAdd);
+				if( with_thumb == true )
+					keyboard_top_part(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,enlargementAdd,extendAdd,
+										thumb_offset(),thumb_key_def_rot,thumb_center_key);
+				if( with_func == true )
+					keyboard_top_part(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,enlargementAdd,extendAdd,
+										func_offset(),func_key_def_rot,func_center_key);
+			}
+		}
+		union() {
+				hull() 
+					translate([0,0,cherry_mx_mount_thickness+step/2-0.1])
+						keyboard_top_band(step,m3_diameter*0.6,m3_diameter*0.3);
+		//this needs to be each section outline (main,thumb,func) hulled with the top part for that section
+				if( with_main == true ) union() {
+					translate([0,0,cherry_mx_mount_thickness+step/2-0.1])
+						keyboard_top_band_main(step,m3_diameter*0.6,m3_diameter*0.3);
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_top_hole(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,enlargementRemove,extendRemove);
+				}
+				if( with_thumb == true ) union() {
+					translate([0,0,cherry_mx_mount_thickness+step/2-0.1])
+						keyboard_top_band_thumb(step,m3_diameter*0.6,m3_diameter*0.3);
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_top_hole(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,enlargementRemove,extendRemove,
+											thumb_offset(),thumb_key_def_rot,thumb_center_key);
+				}
+				if( with_func == true ) union() {
+					translate([0,0,cherry_mx_mount_thickness+step/2-0.1])
+						keyboard_top_band_func(step,m3_diameter*0.6,m3_diameter*0.3);
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_top_hole(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,enlargementRemove,extendRemove,
+											func_offset(),func_key_def_rot,func_center_key);
+				}
+			
 		}
 	}
 }
@@ -809,13 +1021,13 @@ if( with_support == true ) {
 		}
 		if( show_plate == true ) {
 			if( split_parts == true ) {
-			intersection() {
-				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-					keyboard_plate();
-				translate([ 5.1*default_key_horiz_offset,
-						-3*default_key_vert_offset,
-						-20] ) cube(220);
-			}
+				intersection() {
+					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+						keyboard_plate();
+					translate([ 5.1*default_key_horiz_offset,
+							-3*default_key_vert_offset,
+							-20] ) cube(220);
+				}
 			} else {
 				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 					keyboard_plate();
@@ -826,25 +1038,25 @@ if( with_support == true ) {
 				keyboard_top();
 		}
 	} else {
-		mirror([1,0,0]) {
+		mirror([1,0,0]){
 			if( show_base == true ) {
 				keyboard_bottom();
 			}
 			if( show_plate == true ) {
 				if( split_parts == true ) {
-				intersection() {
-					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-						keyboard_plate();
-					translate([ 5.1*default_key_horiz_offset,
-							-3*default_key_vert_offset,
-							-20] ) cube(220);
-				}
+					intersection() {
+						translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
+							keyboard_plate();
+						translate([ 5.1*default_key_horiz_offset,
+								-3*default_key_vert_offset,
+								-20] ) cube(220);
+					}
 				} else {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 						keyboard_plate();
+				}
 			}
 		}
-	}
 	}
 	if(show_keyswitches==true) 
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) {
