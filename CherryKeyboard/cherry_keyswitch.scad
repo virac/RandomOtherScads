@@ -1,26 +1,26 @@
 
 
-center_pole_diameter = 4;
-center_pole_height = 3.2;
+center_pole_diameter = 4 ;
+center_pole_height = 3.2 ;
 
-fixing_pin_diameter = 1.7;
-fixing_pin_height = 3.3;
+fixing_pin_diameter = 1.7 ;
+fixing_pin_height = 3.3 ;
 
-key_pin_diameter = 1.5;
-key_pin_height = 3.3;
+key_pin_diameter = 1.5 ;
+key_pin_height = 3.3 ;
 
-led_pin_diameter = 1;
-led_pin_height = 3.3;
+led_pin_diameter = 1 ;
+led_pin_height = 3.3 ;
 
-cherry_mx_outer_width = 16;//15.6;
-cherry_mx_outer_thickness = 11;
-cherry_mx_mount_bottom_thickness = 5;
+cherry_mx_outer_width = 16 ;//15.6;
+cherry_mx_outer_thickness = 11 ;
+cherry_mx_mount_bottom_thickness = 5 ;
 cherry_mx_top_thickness = cherry_mx_outer_thickness-cherry_mx_mount_bottom_thickness;
+cherry_mx_grip_thickness = 1.6 ;
+cherry_mx_keycap_buffer = 0.6 ;
 
-cherry_mx_keycap_buffer = 0.6;
-
-cherry_mx_mount_width = 14;
-cherry_mx_mount_thickness = 1.5;
+cherry_mx_mount_width = 14 ;
+cherry_mx_mount_thickness = 3.5 ; //1.5 to have the pins
 
 grid_space = 1.27;
 key_pin1_pos = [-3,2,0];
@@ -33,7 +33,7 @@ led_pin2_pos = [1,-4,0];
 //cherry_keyswitch(fixing_pins = false, switch_pins = false, led_pins = false, show_part = [true,true,true,false,true,true]);//[true,true,true,true,true,true]);
 
 module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = false, show_part = [true,true,true,true,false,false]) {
-	translate([0,0,cherry_mx_mount_thickness]) {
+	translate([0,0,cherry_mx_mount_thickness/2]) {
 		if( show_part[0] == true ) {
 			translate([0,0,cherry_mx_top_thickness/2])
 				cube([cherry_mx_outer_width,cherry_mx_outer_width,	
@@ -64,7 +64,7 @@ module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = fal
 		}
 	
 		if( show_part[2] == true ) {
-			translate([0,0,-(cherry_mx_mount_thickness+(max(center_pole_height,fixing_pin_height))/2)])
+			translate([0,0,-(cherry_mx_grip_thickness+(max(center_pole_height,fixing_pin_height))/2)])
 				cube([4,
 						half_between(cherry_mx_outer_width,cherry_mx_mount_width),	
 						max(center_pole_height,fixing_pin_height)],center = true);
@@ -124,9 +124,9 @@ module cherry_keyswitch( fixing_pins = true, switch_pins = false, led_pins = fal
 					}
 				}
 			} else {
-				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)*8])
+				translate([0,0,-(cherry_mx_mount_bottom_thickness)-max(center_pole_height,fixing_pin_height)])
 					cube([cherry_mx_mount_width,cherry_mx_mount_width,	
-							max(center_pole_height,fixing_pin_height)*16],center = true);
+							max(center_pole_height,fixing_pin_height)*2],center = true);
 			}
 		}
 	}

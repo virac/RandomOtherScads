@@ -16,8 +16,9 @@ with_support = false;
 show_keyswitches = false;
 show_keycaps = false;
 show_screws = true;
+show_support = false;
 
-stilts = true;
+stilts = false;
 attach_vert = true;
 attach_hoiz = true;
 attach_corner = true;
@@ -25,18 +26,24 @@ attach_corner = true;
 standoff_thickness = 7;
 
 default_key_size = cherry_mx_outer_width;
-default_key_horiz_space = 5;
-default_key_vert_space = 5;
+default_key_horiz_space = 4;
+default_key_vert_space = 4;
 
 default_key_horiz_offset = default_key_size+default_key_horiz_space;
 default_key_vert_offset = default_key_size+default_key_vert_space;
 
+rows_0 = 0 ;
+cols_0 = 1 ;
 rows = 5;//5;
-cols = 8;//6;
+cols = 8;//8;//6;
 
+thumb_rows_0 = 0 ;
+thumb_cols_0 = 0 ;
 thumb_rows = 3;
 thumb_cols = 3;
 
+func_rows_0 = 0 ;
+runc_cols_0 = 0 ;
 func_rows = 1;
 func_cols = 6;
 
@@ -48,24 +55,24 @@ shift_rot = 3;
 
 row_shift = [	
 				[0,0,7,-20],
-				[0,0,2.5,-8],
+				[0,0.5,2.5,-8],
 				[0,0,0,0],
-				[0,2,2,6.5],
-				[0,4,10,33],
-				[0,0,15,0],
+				[0,0.5,2,11],
+				[0,2,10,33],
+				[0,4,15,0], //not used
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
 col_shift = [	
-				[0,0,-1,-10],
-				[0,0,5,5],
+				[0,0,0,-10],//not used
+				[0,0,7,15],
 				[2,2,3,0],
 				[0,10,2,-4],
 				[0,12,0,-8],
-				[0,7,12,-16],
-				[0,0,22,-20], //	[0,0,22,-20],
-				[0,0,32,-34], //	[0,0,32,-24],
+				[0,7,7,-16],
+				[0,0,17,-20], //	[0,0,22,-20],
+				[0,0,30,-34], //	[0,0,32,-24],
 				[0,0,0,0],
 				[0,0,0,0],
 				[0,0,0,0]];
@@ -76,7 +83,7 @@ thumb_row_shift = [
 				[0,0,5,15],
 				[0,0,0,0] ];
 thumb_col_shift = [	
-				[0,0,15,40],
+				[0,0,15,40], //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!40
 				[5,0,2,0],
 				[0,0,3.8,-10],
 				[0,0,0,0] ];
@@ -97,16 +104,17 @@ func_col_shift = [
 				[0,0,0,0]
 				];
 
-function center_key_offset() = [	center_key[0]*default_key_horiz_offset,
-					center_key[1]*default_key_vert_offset,0];
-
-function thumb_offset() = center_key_offset() + [80,-50,0];
-
-function func_offset() = center_key_offset() + [-63,135,0];
 
 center_key = [4,2];
 thumb_center_key = [1,1];
 thumb_key_def_rot = [0,0,-35];
+
+center_key_offset = [	center_key[0]*default_key_horiz_offset,
+					center_key[1]*default_key_vert_offset,0];
+
+thumb_offset = center_key_offset + [80,-50,0];
+
+func_offset = center_key_offset + [-63,135,0];
 
 func_center_key = [0,3];
 func_key_def_rot = [0,0,0];
@@ -114,15 +122,15 @@ func_key_def_rot = [0,0,0];
 patch_size = 1;
 
 key_enable = [	
-				/*[0,0,0,0,0,0,1,0,0,0,0],
-				[0,0,0,0,0,0,1,4,0,0,0],
-				[0,0,0,0,0,0,1,0,0,0,0],
-				[0,0,0,0,0,0,1,5,0,0,0],
-				[0,0,0,0,0,0,1,1,0,0,0],
-				[0,0,0,0,0,0,1,0,0,0,0],
+			 /*    [0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,1,0,1,4,0,0,0],
+				[0,0,0,0,0,1,0,0,0,0],
+				[0,0,0,0,0,1,5,0,0,0],
+				[0,0,0,0,0,1,1,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0]];*/
 				
-			  [0,1,1,1,1,1,0,0,0,0,0],
+				[0,1,1,1,1,1,0,0,0,0,0],
 				[0,9,1,1,1,1,1,4,0,0,0],
 				[0,9,1,1,1,1,1,0,0,0,0],
 				[0,9,1,1,1,1,1,5,0,0,0],
@@ -145,18 +153,21 @@ func_key_enable = [
 screw_hole_offset = [ //x,y,rot
 				[1,2,0],
 				[4,2,0],
-				[1,4,0],
+				[0.9,4,0],
 				[4,4,0],
-				[2.3,5.95,90],
-				[4.2,6,90],
-				[4,8,0]/*,
+				[1.2,7.2,0],
+				[4.05,7.0,90]
+			//	,[1.15,7.95,0],
+			//	[3.9,7.95,0]
+		/*		,
 				[6.1,2.8,0],
 				[6.1,5.2,0]*/ ];
 
 thumb_screw_hole_offset = [
-				[0,1,0],
-				[2.2,0.8,0],
-				[2,3,0] ];
+				[0.3,1,0],
+				[1.8,0.87,0],
+				[1,2.95,0],
+				[2.0,2.95,0] ];
 				
 func_screw_hole_offset = [
 				[0.05,-0.2,0],
@@ -223,11 +234,11 @@ key_height_part_table = [	[2,[[-1,default_key_vert_offset],
 // 8 = 1.5x1 key horizontal (left half)
 // 9 = 1.5x1 key horizontal (right half)
 //col_shift = [0,0.2,0.5,0.7,0.5,0.2,0,0,0,0];
-module keyboard_key(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
-	for( i=[0:row-1] ) 
-		for( j = [0:col-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
+module keyboard_key(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
+	for( i=[row_0:row_n-1] ) for( j = [col_0:col_n-1] ) 
+		translate( base_offset + key_translation( i, j, row_s, col_s ) ) 
 			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) {
-				if( enabled[i][j] == 1 ) {
+				if( enabled[i][j] == 1 ) { 
 					scale([scale_xy,scale_xy,1]) 
 						cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}	
@@ -271,14 +282,25 @@ module keyboard_key(row,col,row_s,col_s,enabled,show_parts = [true,true,false,tr
 						scale([scale_xy,scale_xy,1]) 
 							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}
+
+				translate([ key_part(i,j,0,enabled,key_width_part_table,0),
+							key_part(i,j,0,enabled,key_height_part_table,0),
+							0]) //shift to center
+					for( o = [-1,1] ) for( p = [-1,1] )
+						translate([	o*key_part(i,j,o,enabled,key_width_part_table,key_width_part_def)/2,
+									p*key_part(i,j,p,enabled,key_height_part_table,key_height_part_def)/2,
+									cherry_mx_mount_thickness/2.0 + (cherry_mx_mount_thickness*2)/2])
+							cube([key_part(i,j,o,enabled,key_width_part_table,key_width_part_def),
+								key_part(i,j,p,enabled,key_height_part_table,key_height_part_def),
+								cherry_mx_mount_thickness*2], center = true);
 			}
 }
 
 
-module keyboard_keycap(row,col,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
-	for( i=[0:row-1] ) 
-		for( j = [0:col-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
-			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) translate([-9,-9,3.6+cherry_mx_top_thickness+cherry_mx_keycap_buffer]) {
+module keyboard_keycap(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
+	for( i=[row_0:row_n-1] ) 
+		for( j = [col_0:col_n-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
+			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) translate([-9,-9,1.6+cherry_mx_top_thickness+cherry_mx_keycap_buffer]) {//3.6
 				if( enabled[i][j] == 1 ) {
 					scale([scale_xy,scale_xy,1]) 
 						import("includes/Key_fixed.stl");
@@ -350,10 +372,10 @@ module face_part( i,j,o,p,row_s,col_s,enable,thickness,enlarge=1.0,extend = 0.0)
 					key_part(i,j,0,enable,key_height_part_table,0),
 					0]) //shift to center
 			translate([	o*key_part(i,j,o,enable,key_width_part_table,key_width_part_def)/2,
-						p*key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2,extend])
+						p*key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2,-0.5])
 				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def) * enlarge,
 						key_part(i,j,p,enable,key_height_part_table,key_height_part_def) * enlarge,
-						thickness],center=true);
+						thickness+1.0],center=true);
 }
 
 module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
@@ -365,25 +387,25 @@ module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
 							0]) {//shift to center 
 					if( piece == 1 ) 
 						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)/2),
-									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),0])
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),-1.0])
 							cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def), 0.1, thickness],center=true);
 					if( piece == 2 ) 
 						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-0.05),
-									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2),0])
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)/2),-1.0])
 							cube([0.1, key_part(i,j,p,enable,key_height_part_table,key_height_part_def), thickness],center=true);
 					if( piece == 3 ) 
 						translate([	o*(key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-0.05),
-									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),0])
+									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),-1.0])
 							cube([0.1, 0.1, thickness],center=true);
 				}
 	}
 }
 
 module base_part_sliver( i,j,o,p,row_s,col_s,enable,thickness) {
-	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
-		translate( key_translation( i,j,row_s,col_s ) )
-			base_part( i,j,o,p,row_s,col_s,enable,thickness);
-	}
+	//if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
+//		translate( key_translation( i,j,row_s,col_s ) )
+	//		base_part( i,j,o,p,row_s,col_s,enable,thickness);
+	//}
 }
 
 module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
@@ -391,33 +413,15 @@ module base_part( i,j,o,p,row_s,col_s,enable,thickness) {
 				key_part(i,j,0,enable,key_height_part_table,0),
 				0]) //shift to center
 		hull() {
-	/*		translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
+			translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
 							sin(col_s[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
 						p*cos(row_s[i][shift_rot])*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
 							tan(row_s[i][shift_rot])*((-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s))/cos(col_s[j][shift_rot])),
 						get_h(i,j,row_s,col_s)])
 				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
 					key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
-					thickness], center = true);*/
-			//this is here so the boxes are at least vertical and no overhang
-/* 		if( i==4 && j == 7 ) {
-			echo( "o:", o );echo( "p:" , p);
-			echo( "hb_horiz: " ,half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2) );
-			echo( "hb_verts: " ,half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2) );
-			echo( "height: ", -cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s) );
-			echo( "col angle: ", col_s[j][shift_rot] );
-			echo( "row angle: ", row_s[i][shift_rot] );
-			echo( "ans: ", p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-							cos(row_s[i][shift_rot])*((-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s))/cos(col_s[j][shift_rot])));
-			translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
-							(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
-						p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-							(p==1?max(tan(row_s[i][shift_rot]),0):min(tan(row_s[i][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)/cos(col_s[j][shift_rot])),
-						get_h(i,j,row_s,col_s)])
-				cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
-					key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
 					thickness], center = true);
-		} else  */
+			//this is here so the boxes are at least vertical and no overhang
 			translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
 							(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
 						p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
@@ -442,124 +446,73 @@ module patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend) {
 	}
 }
 
+module patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness) {
+	for( i = [row_0:row_n-1] )
+		for( j = [col_0:col_n-1] )  if( enable[i][j] != 0 ) {
+			patch_box(i,j,row_s,col_s,enable,thickness);
+		}
+}
+
 module patch_box(i,j,row_s,col_s,enable,thickness) {
 	sliver_shift =  key_translation( i, j, row_s, col_s );
-	translate( base_offset + sliver_shift )
-			if( stilts == true ) {
-				union() for( o = [-1,1] ) for( p = [-1,1] ) { 
-					translate(-sliver_shift) {
-						//colums are solid]
-						if( attach_vert == true ) hull() {
-							face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
-							 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
-							if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
-								face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-							} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
-								face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-							} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
-								face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-							} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
-								face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-							} else {
-								face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
-							}
-							base_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness);
-							base_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness);
-						}					
-						//rows are solid
-						if( attach_hoiz == true ) hull() {
-							face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
-							
-							if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
-								face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
-							} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
-								face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
-							} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
-								face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
-							} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
-								face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
-							} else {
-								face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
-							}
-							
-							base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
-							base_part_sliver( i  ,j+o,-o,p,row_s,col_s,enable,thickness);
-						}			
-						//corners are attached
-						if( attach_corner == true ) hull() {
-							face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
-							face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
-							base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
-							base_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness);
-						}
+	translate( base_offset ) {
+		union() {
+			for( o = [-1,1] ) for( p = [-1,1] ) {
+				//colums are solid]
+				if( attach_vert == true ) hull() {
+					face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
+					 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
+					if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
+						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
+						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
+						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
+						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+					} else {
+						face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					}
-					hull() {
-						face_part( i,j,o,p,row_s,col_s,enable,thickness);
-						base_part( i,j,o,p,row_s,col_s,enable,thickness);
-					}//hull
-
-				}// for( o = [-1,1] ) for( p = [-1,1] )
-			} else {
-				union() {
-					for( o = [-1,1] ) for( p = [-1,1] ) {
-						translate(-sliver_shift) {
-							//colums are solid]
-							if( attach_vert == true ) hull() {
-								face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
-								 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
-								if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
-									face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-								} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
-									face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-								} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
-									face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-								} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
-									face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
-								} else {
-									face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
-								}
-								base_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness);
-								base_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness);
-							}					
-							//rows are solid
-							if( attach_hoiz == true ) hull() {
-								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
-								
-								if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
-									face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
-								} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
-									face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
-								} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
-									face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
-								} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
-									face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
-								} else {
-									face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
-								}
-								
-								base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
-								base_part_sliver( i  ,j+o,-o,p,row_s,col_s,enable,thickness);
-							}			
-							//corners are attached
-							if( attach_corner == true ) hull() {
-								face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
-								face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
-								base_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness);
-								base_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness);
-							}
-						}
+				}					
+				//rows are solid
+				if( attach_hoiz == true ) hull() {
+					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
+					
+					if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
+						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
+						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
+						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+					} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
+						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+					} else {
+						face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
 					}
+					
+					if( o == 1 && enable[i][j] == 1 && enable[i-1][j+1] == 4)  {
+						face_part_sliver( i-1,j+1,-o,p,row_s,col_s,enable,thickness,3);
+					}
+					if( o == 1 && enable[i][j] == 1 && enable[i+1][j+1] == 5)  {
+						face_part_sliver( i+1,j+1,-o,p,row_s,col_s,enable,thickness,3);
+					} 
+				}			
+				//corners are attached
+				if( attach_corner == true ) hull() {
+					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
+					face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,3);
+					face_part_sliver( i+p,j  , o,-p,row_s,col_s,enable,thickness,3);
+					face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
 				}
-				hull() {
-					for( o = [-1,1] ) for( p = [-1,1] ) { 
-						face_part( i,j,o,p,row_s,col_s,enable,thickness);
-						if( i==4 && j==7) 
-						base_part( i,j,o,p,row_s,col_s,enable,thickness);
-				else 
-						base_part( i,j,o,p,row_s,col_s,enable,thickness);
-					}// for( o = [-1,1] ) for( p = [-1,1] )
-				}//hull
 			}
+		}
+		translate(sliver_shift) hull() {
+			for( o = [-1,1] ) for( p = [-1,1] ) { 
+				face_part( i,j,o,p,row_s,col_s,enable,thickness);
+		//		base_part( i,j,o,p,row_s,col_s,enable,thickness);
+			}// for( o = [-1,1] ) for( p = [-1,1] )
+		}//hull
+	}
 }
 
 module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
@@ -571,17 +524,17 @@ module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
 							0]) 
 					{//shift to center
 					translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
-									sin(col_s[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+								0,//	sin(col_s[j][shift_rot])*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
 								p*cos(row_s[i][shift_rot])*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-									tan(row_s[i][shift_rot])*((-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s))/cos(col_s[j][shift_rot])),
+								0,//	tan(row_s[i][shift_rot])*((-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s))/cos(col_s[j][shift_rot])),
 								get_h(i,j,row_s,col_s)])
 						cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
 							key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
 							thickness], center = true);
 					translate([	o*half_between(key_part(i,j,o,enable,key_width_part_table,key_width_part_def),cherry_mx_mount_width/2)+
-									(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
+								0,//	(o==1?min(sin(col_s[j][shift_rot]),0):max(sin(col_s[j][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)),
 								p*half_between(key_part(i,j,p,enable,key_height_part_table,key_height_part_def),cherry_mx_mount_width/2)-
-									(p==1?max(tan(row_s[i][shift_rot]),0):min(tan(row_s[i][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)/cos(col_s[j][shift_rot])),
+								0,//	(p==1?max(tan(row_s[i][shift_rot]),0):min(tan(row_s[i][shift_rot]),0))*(-cherry_mx_mount_bottom_thickness+get_h(i,j,row_s,col_s)/cos(col_s[j][shift_rot])),
 								get_h(i,j,row_s,col_s)])
 						cube([key_part(i,j,o,enable,key_width_part_table,key_width_part_def)-cherry_mx_mount_width/2,
 							key_part(i,j,p,enable,key_height_part_table,key_height_part_def) -cherry_mx_mount_width/2,
@@ -596,7 +549,7 @@ module key_patch_bottom(i,j,row_s,col_s,enable,thickness) {
 //*******************************************************************
 module keyboard_screws(hole_offset,row_s,col_s,enable, offset = [0,0,0], key_rot = [0,0,0], center_key = [0,0]) {
 	translate( offset )
-		rotate(key_rot) 
+		rotate(key_rot)
 			translate([	-center_key[0]*default_key_horiz_offset,
 						-center_key[1]*default_key_vert_offset,0]) { 
 				union() {
@@ -605,7 +558,7 @@ module keyboard_screws(hole_offset,row_s,col_s,enable, offset = [0,0,0], key_rot
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							rotate([0,0,hole_offset[i][2]])
 								cylinder( r = m3_nut_diameter/2, h = 60, $fn = 6 );
-							translate([0,0,-cherry_mx_mount_bottom_thickness-0.1])	{
+							translate([0,0,-standoff_thickness-0.1])	{
 								cylinder( r = m3_diameter/2, h = 60, $fn = 30 ); // hole
 								cylinder( r1 = m3_diameter, r2 = m3_diameter/2, h = cherry_mx_mount_thickness, $fn = 30 );
 							}
@@ -617,13 +570,25 @@ module keyboard_screws(hole_offset,row_s,col_s,enable, offset = [0,0,0], key_rot
 	}
 }
 
-module keyboard_screw_mounts(hole_offset,row_s,col_s,enable ) {
-	union() {
-		for( i=[0:len(hole_offset)-1] )
+module keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness ) {
+	union() for( i=[0:len(hole_offset)-1] ) {
+		hull() {
 			translate( screw_trans( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
-						[default_key_horiz_space/2,default_key_vert_space/2,-cherry_mx_mount_bottom_thickness])  {
-				cylinder( r = m3_nut_diameter*3/4, h = cherry_mx_mount_bottom_thickness+m3_nut_thickness );
+						[default_key_horiz_space/2,default_key_vert_space/2,-standoff_thickness])  {
+				cylinder( r = m3_nut_diameter*3/4, h = cherry_mx_mount_thickness+standoff_thickness );//cherry_mx_mount_bottom_thickness+m3_nut_thickness );
 			}
+//TODO Add here for terminal supportsy thing
+			intersection() {
+				patch_set( //row_0,row_n,col_0,col_n,
+							max(floor(hole_offset[i][0])-1,row_0),min(ceil(hole_offset[i][0])+1,row_n),
+							max(floor(hole_offset[i][1])-1,col_0),min(ceil(hole_offset[i][1])+1,col_n),
+							row_s,col_s,enable,thickness/2);
+				translate( screw_trans( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
+							[default_key_horiz_space/2,default_key_vert_space/2,-cherry_mx_mount_bottom_thickness])  {
+					cylinder( r = m3_nut_diameter*3/4, h = 60 );//cherry_mx_mount_bottom_thickness+m3_nut_thickness );
+				}
+			}
+		}
 	}
 }
 
@@ -637,15 +602,15 @@ module screw_patch_bottom(hole_offset,row_s,col_s,enable,thickness ) {
 	}
 }
 
-module patch_bottom(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+module patch_bottom(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	hull() {
 		translate(offset )
 			rotate(key_rot) 
 				translate([	-center_key[0]*default_key_horiz_offset,
 							-center_key[1]*default_key_vert_offset,0]) {
 					translate(base_offset)
-						for( i = [0:row_n-1] )
-							for( j = [0:col_n-1] ) if( isBorder(i,j,row_n-1,col_n-1,enable) )
+						for( i = [row_0:row_n-1] )
+							for( j = [col_0:col_n-1] ) if( isBorder(i,j,row_n-1,col_n-1,enable) )
 								key_patch_bottom(i,j,row_s,col_s,enable,thickness);
 					if( show_screws==true ) 
 						screw_patch_bottom(hole_offset,row_s,col_s,enable,thickness );
@@ -653,15 +618,15 @@ module patch_bottom(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset 
 	}		
 }
 
-module patch_bottom_border(b,row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+module patch_bottom_border(b,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	hull() {
 		translate(offset )
 			rotate(key_rot) 
 				translate([	-center_key[0]*default_key_horiz_offset,
 							-center_key[1]*default_key_vert_offset,0]) {
 					translate(base_offset)
-						for( i = [0:row_n-1] )
-							for( j = [0:col_n-1] ) 
+						for( i = [row_0:row_n-1] )
+							for( j = [col_0:col_n-1] ) 
 								if( (borderBottom(b) && isBorderBottom(i,j,row_n-1,col_n-1,enable)) || 
 									(borderTop(b)    && isBorderTop   (i,j,row_n-1,col_n-1,enable)) ||
 									(borderRight(b)  && isBorderRight (i,j,row_n-1,col_n-1,enable)) ||
@@ -674,28 +639,28 @@ module patch_bottom_border(b,row_n,col_n,row_s,col_s,enable,thickness,hole_offse
 	}		
 }
 
-module keyboard_top_part(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+module keyboard_top_part(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	union() {
 		translate(offset )
 			rotate(key_rot) 
 				translate([	-center_key[0]*default_key_horiz_offset,
 							-center_key[1]*default_key_vert_offset,0]) {
-					for( i = [0:row_n-1] )
-						for( j = [0:col_n-1] )  if( enable[i][j] != 0 && isBorder(i,j,row_n-1,col_n-1,enable) ) {
+					for( i = [row_0:row_n-1] )
+						for( j = [col_0:col_n-1] )  if( enable[i][j] != 0 && isBorder(i,j,row_n-1,col_n-1,enable) ) {
 							patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend);
 					}
 				}
 	}
 }
 
-module keyboard_top_hole(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+module keyboard_top_hole(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,enlargement,extend,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	union() {
 		translate(offset )
 			rotate(key_rot) 
 				translate([	-center_key[0]*default_key_horiz_offset,
 							-center_key[1]*default_key_vert_offset,0]) {
-					for( i = [0:row_n-1] )
-						for( j = [0:col_n-1] )  if( enable[i][j] != 0 /*&& isBorder(i,j,row_n-1,col_n-1,enable)*/ ) hull() {
+					for( i = [row_0:row_n-1] )
+						for( j = [col_0:col_n-1] )  if( enable[i][j] != 0 /*&& isBorder(i,j,row_n-1,col_n-1,enable)*/ ) hull() {
 							translate(base_offset)
 								key_patch_bottom(i,j,row_s,col_s,enable,thickness);
 							patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend);
@@ -704,74 +669,76 @@ module keyboard_top_hole(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,en
 	}
 }
 
-module keyboard_plate_part(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+module keyboard_plate_support(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset ) {
+
+
+}
+
+module keyboard_plate_part(build_screws,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	union() {
 		translate(offset )
 			rotate(key_rot) 
 				translate([	-center_key[0]*default_key_horiz_offset,
 							-center_key[1]*default_key_vert_offset,0]) {
-					for( i = [0:row_n-1] )
-						for( j = [0:col_n-1] )  if( enable[i][j] != 0 ) {
-						patch_box(i,j,row_s,col_s,enable,thickness);
-					}
-					if( show_screws==true ) 
-						keyboard_screw_mounts(hole_offset,row_s,col_s,enable,thickness );
+				
+					patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness);
+					if( build_screws==true ) 
+						keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness );
+					//if( show_support==true )
+					//	keyboard_plate_support(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,offset);
 				}
 	}
 }
 
-module keyboard_keys(row_n,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
-		translate(offset )
-			rotate(key_rot) 
-				translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-							(default_key_vert_offset +default_key_vert_space )/2,0])
-					translate([	-center_key[0]*default_key_horiz_offset,
-								-center_key[1]*default_key_vert_offset,0])
-						keyboard_key(	row_n,col_n,row_s,col_s,enable,
-										[true,true,true,false,true,true],false,1);
+module keyboard_keys(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
+	translate(offset )
+		rotate(key_rot) 
+			translate([	-center_key[0]*default_key_horiz_offset,
+						-center_key[1]*default_key_vert_offset,0])
+				keyboard_key(	row_0,row_n,col_0,col_n,row_s,col_s,enable,
+								[true,true,true,false,true,true],false,1);
 }
 
-module keyboard_plate() {
+module keyboard_plate(	show_main, show_thumb, show_func, build_screws,
+						m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key,
+						t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key,
+						f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key) {
 	difference() {
 		union() {
-			hull() {
-				if( with_main == true )
+		/*	hull() {
+				if( show_main == true )
 					patch_bottom(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset);
-				if( with_thumb == true )
+				if( show_thumb == true )
 					patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,
-									thumb_offset(),thumb_key_def_rot,thumb_center_key);
-				if( with_func == true )
+									thumb_offset,thumb_key_def_rot,thumb_center_key);
+				if( show_func == true )
 					patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
-									func_offset(),func_key_def_rot,func_center_key);
-			}
-			if( with_main == true )
-				keyboard_plate_part(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset);
-			if( with_thumb == true )
-				keyboard_plate_part(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,
-									thumb_offset(),thumb_key_def_rot,thumb_center_key);
-			if( with_func == true )
-				keyboard_plate_part(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
-									func_offset(),func_key_def_rot,func_center_key);
+									func_offset,func_key_def_rot,func_center_key);
+			}*/
+			if( show_main == true )
+				keyboard_plate_part(build_screws,m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key);
+			if( show_thumb == true )
+				keyboard_plate_part(build_screws,t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
+			if( show_func == true )
+				keyboard_plate_part(build_screws,f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
 		}
 
 		union() {
-			if( with_main == true )
-				keyboard_keys(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset);
-			if( with_thumb == true )
-				keyboard_keys(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,
-									thumb_offset(),thumb_key_def_rot,thumb_center_key);
-			if( with_func == true )
-				keyboard_keys(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
-									func_offset(),func_key_def_rot,func_center_key);
-			if( show_screws == true ) {
-				if( with_main == true )
-					keyboard_screws(screw_hole_offset,row_shift,col_shift,key_enable);
-				if( with_thumb == true )
+			if( show_main == true )
+				keyboard_keys(m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key);
+			if( show_thumb == true )
+				keyboard_keys(t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
+			if( show_func == true )
+				keyboard_keys(f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
+			if( build_screws == true ) {
+				if( show_main == true )
+					keyboard_screws(m_hole_offset,m_row_s,m_col_s,m_enable,m_offset,m_key_rot,m_center_key);
+				if( show_thumb == true )
 					keyboard_screws(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
-											thumb_offset(),thumb_key_def_rot,thumb_center_key);
-				if( with_func == true )
-					keyboard_screws(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,
-											func_offset(),func_key_def_rot,func_center_key);
+											thumb_offset,thumb_key_def_rot,thumb_center_key);
+					keyboard_screws(t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
+				if( show_func == true )
+					keyboard_screws(f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
 			}
 		}
 	}
@@ -784,7 +751,7 @@ module keyboard_screws_mount( hole_offset, row_s, col_s, enable,thickness, offse
 						-center_key[1]*default_key_vert_offset,0])
 				union() {
 					for( i=[0:len(hole_offset)-1] )
-						translate( 	key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
+						translate( 	screw_trans( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +//key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							translate([0,0,-cherry_mx_mount_bottom_thickness+cherry_mx_mount_thickness-0.1]) {
 								cylinder( r = m3_diameter, h = thickness, $fn = 30 );
@@ -802,10 +769,10 @@ module keyboard_screws_mount_hole( hole_offset, row_s, col_s, enable, offset = [
 						-center_key[1]*default_key_vert_offset,0])
 				union() {
 					for( i=[0:len(hole_offset)-1] )
-						translate( key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
+						translate( screw_trans( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +//key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							translate([0,0,-cherry_mx_mount_bottom_thickness-0.1])
-								cylinder( r = m3_diameter/2, h = 30, $fn = 30 ); // hole
+				#				cylinder( r = m3_diameter/2, h = 30, $fn = 30 ); // hole
 						}
 				}
 }
@@ -813,13 +780,13 @@ module keyboard_screws_mount_hole( hole_offset, row_s, col_s, enable, offset = [
 module keyboard_bottom_thing(thickness) {
 	hull() {
 		if( with_main == true )
-			patch_bottom(rows,cols,row_shift,col_shift,key_enable,thickness,screw_hole_offset);
+			patch_bottom(rows_0,rows,cols_0,cols,,row_shift,col_shift,key_enable,thickness,screw_hole_offset);
 		if( with_thumb == true )
-			patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,thickness,thumb_screw_hole_offset,
-							thumb_offset(),thumb_key_def_rot,thumb_center_key);
+			patch_bottom(thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,thickness,thumb_screw_hole_offset,
+							thumb_offset,thumb_key_def_rot,thumb_center_key);
 		if( with_func == true )
-			patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,thickness,func_screw_hole_offset,
-							func_offset(),func_key_def_rot,func_center_key);
+			patch_bottom(func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,thickness,func_screw_hole_offset,
+							func_offset,func_key_def_rot,func_center_key);
 	}
 }
 
@@ -829,13 +796,15 @@ module keyboard_bottom_main(thickness) {
 			patch_bottom(rows,cols,row_shift,col_shift,key_enable,thickness,screw_hole_offset);
 	}
 }
+
 module keyboard_bottom_thumb(thickness) {
 	hull() {
 		if( with_thumb == true )
 			patch_bottom(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,thickness,thumb_screw_hole_offset,
-							thumb_offset(),thumb_key_def_rot,thumb_center_key);
+							thumb_offset,thumb_key_def_rot,thumb_center_key);
 	}
 }
+
 module keyboard_bottom_func(thickness) {
 	hull() {
 		if( with_func == true )
@@ -866,10 +835,10 @@ module keyboard_bottom() {
 					keyboard_screws_mount(screw_hole_offset,row_shift,col_shift,key_enable,standoff_thickness);
 				if( with_thumb == true )
 					keyboard_screws_mount(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,standoff_thickness,
-											thumb_offset(),thumb_key_def_rot,thumb_center_key);
+											thumb_offset,thumb_key_def_rot,thumb_center_key);
 				if( with_func == true )
 					keyboard_screws_mount(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,standoff_thickness,
-											func_offset(),func_key_def_rot,func_center_key);
+											func_offset,func_key_def_rot,func_center_key);
 			}
 		}
 		if( show_screws==true ) union() {
@@ -877,10 +846,10 @@ module keyboard_bottom() {
 				keyboard_screws_mount_hole(screw_hole_offset,row_shift,col_shift,key_enable);
 			if( with_thumb == true )
 				keyboard_screws_mount_hole(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
-										thumb_offset(),thumb_key_def_rot,thumb_center_key);
+										thumb_offset,thumb_key_def_rot,thumb_center_key);
 			if( with_func == true )
 				keyboard_screws_mount_hole(func_screw_hole_offset,func_row_shift,func_col_shift,func_key_enable,
-										func_offset(),func_key_def_rot,func_center_key);
+										func_offset,func_key_def_rot,func_center_key);
 		}
 	}
 }
@@ -994,7 +963,7 @@ module keyboard_top() {
 						keyboard_top_part(rows,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,enlargementAdd,extendAdd);
 					if( with_thumb == true )
 						keyboard_top_part(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,enlargementAdd,extendAdd,
-											thumb_offset(),thumb_key_def_rot,thumb_center_key);
+											thumb_offset,thumb_key_def_rot,thumb_center_key);
 					if( with_func == true )
 						keyboard_top_part(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,enlargementAdd,extendAdd,
 											func_offset(),func_key_def_rot,func_center_key);
@@ -1017,14 +986,14 @@ module keyboard_top() {
 						keyboard_top_band_thumb(step,m3_diameter*0.6,m3_diameter*0.3);
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 						keyboard_top_hole(thumb_rows,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,enlargementRemove,extendRemove,
-											thumb_offset(),thumb_key_def_rot,thumb_center_key);
+											thumb_offset,thumb_key_def_rot,thumb_center_key);
 				}
 				if( with_func == true ) union() {
 					translate([0,0,cherry_mx_mount_thickness+step/2-0.1])
 						keyboard_top_band_func(step,m3_diameter*0.6,m3_diameter*0.3);
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
 						keyboard_top_hole(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,enlargementRemove,extendRemove,
-											func_offset(),func_key_def_rot,func_center_key);
+											func_offset,func_key_def_rot,func_center_key);
 				}
 			
 		}
@@ -1046,14 +1015,20 @@ if( with_support == true ) {
 			if( split_parts == true ) {
 				difference() {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-						keyboard_plate();
+					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
+									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
+									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
 					translate([ 5.2*default_key_horiz_offset,
 							-3*default_key_vert_offset,
 							-20] ) cube(220);
 				}
 			} else {
 				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-					keyboard_plate();
+					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
+									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
+									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
 			}
 		}
 		if( show_top == true ) {
@@ -1069,41 +1044,47 @@ if( with_support == true ) {
 				if( split_parts == true ) {
 					intersection() {
 						translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-							keyboard_plate();
+					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
+									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
+									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
 						translate([ 5.1*default_key_horiz_offset,
 								-3*default_key_vert_offset,
 								-20] ) cube(220);
 					}
 				} else {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-						keyboard_plate();
+					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
+									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
+									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
 				}
 			}
 		}
 	}
 	if(show_keyswitches==true) translate([0,0,standoff_thickness+cherry_mx_mount_thickness]) {
 		if( with_main == true )
-			translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-						(default_key_vert_offset +default_key_vert_space )/2,0])
-				color("Blue") keyboard_key(rows,cols,row_shift,col_shift,key_enable);
+			//translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
+			//			(default_key_vert_offset +default_key_vert_space )/2,0])
+				color("Blue") keyboard_key(rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable);
 		
 		if( with_thumb == true )
-			translate( thumb_offset() )
+			translate( thumb_offset )
 				rotate(thumb_key_def_rot) 
-					translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-								(default_key_vert_offset +default_key_vert_space )/2,0])
+			//		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
+			//					(default_key_vert_offset +default_key_vert_space )/2,0])
 						translate([	-thumb_center_key[0]*default_key_horiz_offset,
 									-thumb_center_key[1]*default_key_vert_offset,0])
-							color("Blue") keyboard_key(	thumb_rows,thumb_cols,
+							color("Blue") keyboard_key(	thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,
 											thumb_row_shift,thumb_col_shift,thumb_key_enable);
 		if( with_func == true )
-			translate( func_offset() )
+			translate( func_offset )
 				rotate(func_key_def_rot) 
-					translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
-								(default_key_vert_offset +default_key_vert_space )/2,0])
+			//		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
+			//					(default_key_vert_offset +default_key_vert_space )/2,0])
 						translate([	-func_center_key[0]*default_key_horiz_offset,
 									-func_center_key[1]*default_key_vert_offset,0])
-							color("Blue") keyboard_key(func_rows,func_cols,
+							color("Blue") keyboard_key(func_rows_0,func_rows,func_cols_0,func_cols,
 											func_row_shift,func_col_shift,func_key_enable);
 	}
 	
@@ -1111,26 +1092,26 @@ if( with_support == true ) {
 			if( with_main == true )
 		translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 						(default_key_vert_offset +default_key_vert_space )/2,0])
-			color("Brown") keyboard_keycap(rows,cols,row_shift,col_shift,key_enable);
+			color("Brown") keyboard_keycap(rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable);
 
 			if( with_thumb == true )
-		translate( thumb_offset() )
+		translate( thumb_offset )
 			rotate(thumb_key_def_rot) 
 				translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 								(default_key_vert_offset +default_key_vert_space )/2,0])
 					translate([	-thumb_center_key[0]*default_key_horiz_offset,
 									-thumb_center_key[1]*default_key_vert_offset,0])
-						color("Brown") keyboard_keycap(thumb_rows,thumb_cols,
+						color("Brown") keyboard_keycap(thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,
 											thumb_row_shift,thumb_col_shift,thumb_key_enable);
 			
 			if( with_func == true )
-		translate( func_offset() )
+		translate( func_offset )
 			rotate(func_key_def_rot) 
 				translate([	(default_key_horiz_offset+default_key_horiz_space)/2,
 								(default_key_vert_offset +default_key_vert_space )/2,0])
 					translate([	-func_center_key[0]*default_key_horiz_offset,
 									-func_center_key[1]*default_key_vert_offset,0])
-						color("Brown") keyboard_keycap(func_rows,func_cols,
+						color("Brown") keyboard_keycap(func_rows_0,func_rows,func_cols_0,func_cols,
 											func_row_shift,func_col_shift,func_key_enable);
 		// for( i=[0:rows-1] ) {
 			// translate( key_row_translation( row_shift,i )+[1.5,0,0] )
@@ -1144,6 +1125,7 @@ if( with_support == true ) {
 	
 	}
 }
+
 function maximum(a, i = 0) = (i < len(a) - 1) ? max(a[i], maximum(a, i +1)) : a[i];
 function maximum0(a, i = 0) = (i < len(a) - 1) ? max(a[i][0], maximum0(a, i +1)) : a[i][0];
 function maximum1(a, i = 0) = (i < len(a) - 1) ? max(a[i][1], maximum0(a, i +1)) : a[i][1];
