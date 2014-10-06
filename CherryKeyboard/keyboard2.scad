@@ -34,24 +34,24 @@ default_key_vert_offset = default_key_size+default_key_vert_space;
 
 rows_0 = 0 ;
 cols_0 = 1 ;
-rows = 5;//5;
-cols = 8;//8;//6;
+rows = 5 ;//5;
+cols = 8 ;//8;//6;
 
 thumb_rows_0 = 0 ;
 thumb_cols_0 = 0 ;
-thumb_rows = 3;
-thumb_cols = 3;
+thumb_rows = 3 ;
+thumb_cols = 3 ;
 
 func_rows_0 = 0 ;
 runc_cols_0 = 0 ;
-func_rows = 1;
-func_cols = 6;
+func_rows = 1 ;
+func_cols = 6 ;
 
-shift_x = 0;
-shift_y = 1;
-shift_z = 2;
-shift_rot = 3;
-
+shift_x = 0 ;
+shift_y = 1 ;
+shift_z = 2 ;
+shift_rot = 3 ;
+shift_spin = 4 ; 
 
 row_shift = [	
 				[0,0,7,-20],
@@ -218,7 +218,10 @@ key_height_part_table = [	[2,[[-1,default_key_vert_offset],
 								[ 1,default_key_vert_offset*3/4]]],
 							[5,[[-1,default_key_vert_offset*3/4],
 								[ 0,-default_key_vert_offset/4],
-								[ 1,default_key_vert_offset*3/4]]] ];
+								[ 1,default_key_vert_offset*3/4]]],
+							[10,[[-1,default_key_vert_offset/3*2],
+								[ 0,-default_key_vert_offset/2],
+								[ 1,default_key_vert_offset*3/4]]], ];
 
 //v = find( 3,key_height_part_table,default_key_vert_offset/2);
 //echo("vec v=",v);
@@ -233,11 +236,12 @@ key_height_part_table = [	[2,[[-1,default_key_vert_offset],
 // 7 = 2x1 key horizontal (right half)
 // 8 = 1.5x1 key horizontal (left half)
 // 9 = 1.5x1 key horizontal (right half)
+//10 = 1x1 key in bottom of 1x1.5 slot
 //col_shift = [0,0.2,0.5,0.7,0.5,0.2,0,0,0,0];
 module keyboard_key(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
 	for( i=[row_0:row_n-1] ) for( j = [col_0:col_n-1] ) 
 		translate( base_offset + key_translation( i, j, row_s, col_s ) ) 
-			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) {
+			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) rotate([0,0,row_s[i][shift_spin]+col_s[j][shift_spin]]) {
 				if( enabled[i][j] == 1 ) { 
 					scale([scale_xy,scale_xy,1]) 
 						cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
@@ -282,6 +286,11 @@ module keyboard_key(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [tr
 						scale([scale_xy,scale_xy,1]) 
 							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
 				}
+				if( enabled[i][j] == 10 ) {
+					translate([0,-default_key_vert_offset/3*2,0])
+						scale([scale_xy,scale_xy,1]) 
+							cherry_keyswitch(fixing_pins = show_pins, led_pins = show_pins, switch_pins = show_pins, show_part = show_parts);
+				}
 
 				translate([ key_part(i,j,0,enabled,key_width_part_table,0),
 							key_part(i,j,0,enabled,key_height_part_table,0),
@@ -300,7 +309,7 @@ module keyboard_key(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [tr
 module keyboard_keycap(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = [true,true,false,true,false,false], show_pins = true, scale_xy = 1) {
 	for( i=[row_0:row_n-1] ) 
 		for( j = [col_0:col_n-1] ) translate( key_translation( i, j, row_s, col_s ) ) 
-			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) translate([-9,-9,1.6+cherry_mx_top_thickness+cherry_mx_keycap_buffer]) {//3.6
+			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) rotate([0,0,row_s[i][shift_spin]+col_s[j][shift_spin]])  translate([-9,-9,1.6+cherry_mx_top_thickness+cherry_mx_keycap_buffer]) {//3.6
 				if( enabled[i][j] == 1 ) {
 					scale([scale_xy,scale_xy,1]) 
 						import("includes/Key_fixed.stl");
@@ -345,6 +354,11 @@ module keyboard_keycap(row_0,row_n,col_0,col_n,row_s,col_s,enabled,show_parts = 
 						scale([scale_xy*1.5,scale_xy,1]) 
 							import("includes/Key_fixed.stl");
 				}
+				if( enabled[i][j] == 10 ) {
+					translate([0,-default_key_vert_offset/3*2,0])
+					scale([scale_xy,scale_xy,1]) 
+						import("includes/Key_fixed.stl");
+				}	
 			}
 }
 module NbyN_patch(n,x,y) {
@@ -367,7 +381,7 @@ module NbyN_patch(n,x,y) {
 }
 
 module face_part( i,j,o,p,row_s,col_s,enable,thickness,enlarge=1.0,extend = 0.0) {
-	rotate([0,col_s[j][shift_rot],0])rotate([row_s[i][shift_rot],0,0]) 
+	rotate([0,col_s[j][shift_rot],0])rotate([row_s[i][shift_rot],0,0]) rotate([0,0,row_s[i][shift_spin]+col_s[j][shift_spin]]) 
 		translate([ key_part(i,j,0,enable,key_width_part_table,0),
 					key_part(i,j,0,enable,key_height_part_table,0),
 					0]) //shift to center
@@ -378,10 +392,11 @@ module face_part( i,j,o,p,row_s,col_s,enable,thickness,enlarge=1.0,extend = 0.0)
 						thickness+1.0],center=true);
 }
 
-module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
-	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
+module face_part_sliver(row_0,row_n,col_0,col_n, i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
+//	if( i > -1 && i < rows && j > -1 && j < cols && enable[i][j] != 0 ) {
+	if( i >= row_0 && i < row_n && j >= col_0 && j < col_n && enable[i][j] != 0 ) {
 		translate( key_translation( i, j, row_s, col_s ) )
-			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0])
+			rotate([0,col_s[j][shift_rot],0]) rotate([row_s[i][shift_rot],0,0]) rotate([0,0,row_s[i][shift_spin]+col_s[j][shift_spin]]) 
 				translate([ key_part(i,j,0,enable,key_width_part_table,0),
 							key_part(i,j,0,enable,key_height_part_table,0),
 							0]) {//shift to center 
@@ -398,7 +413,9 @@ module face_part_sliver( i,j,o,p,row_s,col_s,enable,thickness,piece=0) {
 									p*(key_part(i,j,p,enable,key_height_part_table,key_height_part_def)-0.05),-1.0])
 							cube([0.1, 0.1, thickness],center=true);
 				}
-	}
+	}// else {
+	//	echo("i ",i," j ",j, " rows[",row_0,row_n,"] cols[",col_0,col_n,"]");
+	//}
 }
 
 module base_part_sliver( i,j,o,p,row_s,col_s,enable,thickness) {
@@ -449,60 +466,60 @@ module patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend) {
 module patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness) {
 	for( i = [row_0:row_n-1] )
 		for( j = [col_0:col_n-1] )  if( enable[i][j] != 0 ) {
-			patch_box(i,j,row_s,col_s,enable,thickness);
+			patch_box(row_0,row_n,col_0,col_n,i,j,row_s,col_s,enable,thickness);
 		}
 }
 
-module patch_box(i,j,row_s,col_s,enable,thickness) {
+module patch_box(row_0,row_n,col_0,col_n,i,j,row_s,col_s,enable,thickness) {
 	sliver_shift =  key_translation( i, j, row_s, col_s );
 	translate( base_offset ) {
 		union() {
 			for( o = [-1,1] ) for( p = [-1,1] ) {
 				//colums are solid]
 				if( attach_vert == true ) hull() {
-					face_part_sliver( i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
+					face_part_sliver(row_0,row_n,col_0,col_n, i  ,j  ,o, p,row_s,col_s,enable,thickness,1);
 					 // if current is 1x1.5 bottom and 2 above is 1x1.5 top, asumes 1 above is empty
 					if(        p == 1 && enable[i][j] == 4 && enable[i+2][j] == 5) {
-						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+						face_part_sliver(row_0,row_n,col_0,col_n, i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					} else if( p ==-1 && enable[i][j] == 5 && enable[i-2][j] == 4)  {// if 1x1.5 top and -2 is bottom
-						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+						face_part_sliver(row_0,row_n,col_0,col_n, i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					} else if( p == 1 && enable[i][j] == 2 && enable[i+2][j] != 0)  {// if 1x2 bottom and +2 is non null
-						face_part_sliver( i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+						face_part_sliver(row_0,row_n,col_0,col_n, i+2,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					} else if( p ==-1 && enable[i][j] == 3 && enable[i-2][j] != 0)  {// if 1x2 top and -1 is non null
-						face_part_sliver( i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
+						face_part_sliver(row_0,row_n,col_0,col_n, i-2,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					} else {
-						face_part_sliver( i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
+						face_part_sliver(row_0,row_n,col_0,col_n, i+p,j  ,o,-p,row_s,col_s,enable,thickness,1);
 					}
 				}					
 				//rows are solid
 				if( attach_hoiz == true ) hull() {
-					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,2);
+					face_part_sliver(row_0,row_n,col_0,col_n, i  ,j  , o, p,row_s,col_s,enable,thickness,2);
 					
 					if(        o == 1 && enable[i][j] == 8 && enable[i][j+2] == 9) {
-						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+						face_part_sliver(row_0,row_n,col_0,col_n, i,j+2,o,-p,row_s,col_s,enable,thickness,2);
 					} else if( o ==-1 && enable[i][j] == 9 && enable[i][j-2] == 8)  {
-						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+						face_part_sliver(row_0,row_n,col_0,col_n, i,j-2,o,-p,row_s,col_s,enable,thickness,2);
 					} else if( o == 1 && enable[i][j] == 6 && enable[i][j+2] != 0)  {
-						face_part_sliver( i,j+2,o,-p,row_s,col_s,enable,thickness,2);
+						face_part_sliver(row_0,row_n,col_0,col_n, i,j+2,o,-p,row_s,col_s,enable,thickness,2);
 					} else if( o ==-1 && enable[i][j] == 7 && enable[i][j-2] != 0)  {
-						face_part_sliver( i,j-2,o,-p,row_s,col_s,enable,thickness,2);
+						face_part_sliver(row_0,row_n,col_0,col_n, i,j-2,o,-p,row_s,col_s,enable,thickness,2);
 					} else {
-						face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
+						face_part_sliver(row_0,row_n,col_0,col_n, i  ,j+o,-o, p,row_s,col_s,enable,thickness,2);
 					}
 					
 					if( o == 1 && enable[i][j] == 1 && enable[i-1][j+1] == 4)  {
-						face_part_sliver( i-1,j+1,-o,p,row_s,col_s,enable,thickness,3);
+						face_part_sliver(row_0,row_n,col_0,col_n, i-1,j+1,-o,p,row_s,col_s,enable,thickness,3);
 					}
 					if( o == 1 && enable[i][j] == 1 && enable[i+1][j+1] == 5)  {
-						face_part_sliver( i+1,j+1,-o,p,row_s,col_s,enable,thickness,3);
+						face_part_sliver(row_0,row_n,col_0,col_n, i+1,j+1,-o,p,row_s,col_s,enable,thickness,3);
 					} 
 				}			
 				//corners are attached
 				if( attach_corner == true ) hull() {
-					face_part_sliver( i  ,j  , o, p,row_s,col_s,enable,thickness,3);
-					face_part_sliver( i  ,j+o,-o, p,row_s,col_s,enable,thickness,3);
-					face_part_sliver( i+p,j  , o,-p,row_s,col_s,enable,thickness,3);
-					face_part_sliver( i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
+					face_part_sliver(row_0,row_n,col_0,col_n, i  ,j  , o, p,row_s,col_s,enable,thickness,3);
+					face_part_sliver(row_0,row_n,col_0,col_n, i  ,j+o,-o, p,row_s,col_s,enable,thickness,3);
+					face_part_sliver(row_0,row_n,col_0,col_n, i+p,j  , o,-p,row_s,col_s,enable,thickness,3);
+					face_part_sliver(row_0,row_n,col_0,col_n, i+p,j+o,-o,-p,row_s,col_s,enable,thickness,3);
 				}
 			}
 		}
@@ -579,7 +596,7 @@ module keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,ena
 			}
 //TODO Add here for terminal supportsy thing
 			intersection() {
-				patch_set( //row_0,row_n,col_0,col_n,
+				patch_set( row_0,row_n,col_0,col_n,
 							max(floor(hole_offset[i][0])-1,row_0),min(ceil(hole_offset[i][0])+1,row_n),
 							max(floor(hole_offset[i][1])-1,col_0),min(ceil(hole_offset[i][1])+1,col_n),
 							row_s,col_s,enable,thickness/2);
@@ -674,6 +691,34 @@ module keyboard_plate_support(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickne
 
 }
 
+module keyboard_linked_part(l_keys,build_screws,
+			row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset,key_rot,center_key,
+			o_row_0,o_row_n,o_col_0,o_col_n,o_row_s,o_col_s,o_enable,o_thickness,o_hole_offset,o_offset,o_key_rot,o_center_key) {
+	for( x = [0:2:len(l_keys)-1] ){
+		//if( row_0 < l_keys[x][0] && row_n > l_keys[x][0] && col_0 < l_keys[x][1] && col_n < l_keys[x][1] &&
+			//	enable[l_keys[x][0]][l_keys[x][1]] != 0 &&
+			//row_0 < l_keys[x+1][0] && row_n > l_keys[x+1][0] && col_0 < l_keys[x+1][1] && col_n < l_keys[x+1][1] &&
+		//		enable[l_keys[x+1][0]][l_keys[x+1][1]] != 0 ) 
+		hull()
+		{
+			translate(offset ) rotate(key_rot) {
+				translate([	-center_key[0]*default_key_horiz_offset,
+							-center_key[1]*default_key_vert_offset,0]) 
+				
+					patch_box(row_0,row_n,col_0,col_n,
+								l_keys[x  ][1],l_keys[x  ][0],row_s,col_s,enable,thickness);
+			}
+			
+			translate(o_offset ) rotate(o_key_rot) {
+				translate([	-o_center_key[0]*default_key_horiz_offset,
+							-o_center_key[1]*default_key_vert_offset,0]) 
+						patch_box(o_row_0,o_row_n,o_col_0,o_col_n,
+							l_keys[x+1][0],l_keys[x+1][1],o_row_s,o_col_s,o_enable,o_thickness);
+			}
+		}
+	}
+}
+
 module keyboard_plate_part(build_screws,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_offset,offset = [0,0,0],key_rot = [0,0,0],center_key = [0,0]) {
 	union() {
 		translate(offset )
@@ -683,7 +728,7 @@ module keyboard_plate_part(build_screws,row_0,row_n,col_0,col_n,row_s,col_s,enab
 				
 					patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness);
 					if( build_screws==true ) 
-						keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness );
+				#		keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness );
 					//if( show_support==true )
 					//	keyboard_plate_support(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,offset);
 				}
@@ -699,7 +744,7 @@ module keyboard_keys(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,hole_o
 								[true,true,true,false,true,true],false,1);
 }
 
-module keyboard_plate(	show_main, show_thumb, show_func, build_screws,
+module keyboard_plate(	show_main, show_thumb, show_func, build_screws, l_t_keys, l_f_keys,
 						m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key,
 						t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key,
 						f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key) {
@@ -721,6 +766,15 @@ module keyboard_plate(	show_main, show_thumb, show_func, build_screws,
 				keyboard_plate_part(build_screws,t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
 			if( show_func == true )
 				keyboard_plate_part(build_screws,f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
+				
+			if( show_main == true && show_thumb == true )
+				keyboard_linked_part( l_t_keys, build_screws,
+										m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key,
+										t_row_0,t_row_n,t_col_0,t_col_n,t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
+			if( show_main == true && show_func == true )
+				keyboard_linked_part( l_f_keys, build_screws,
+										m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key,
+										f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
 		}
 
 		union() {
@@ -734,11 +788,9 @@ module keyboard_plate(	show_main, show_thumb, show_func, build_screws,
 				if( show_main == true )
 					keyboard_screws(m_hole_offset,m_row_s,m_col_s,m_enable,m_offset,m_key_rot,m_center_key);
 				if( show_thumb == true )
-					keyboard_screws(thumb_screw_hole_offset,thumb_row_shift,thumb_col_shift,thumb_key_enable,
-											thumb_offset,thumb_key_def_rot,thumb_center_key);
-					keyboard_screws(t_row_s,t_col_s,t_enable,t_thickness,t_hole_offset,t_offset,t_key_rot,t_center_key);
+					keyboard_screws(t_hole_offset,t_row_s,t_col_s,t_enable,t_offset,t_key_rot,t_center_key);
 				if( show_func == true )
-					keyboard_screws(f_row_0,f_row_n,f_col_0,f_col_n,f_row_s,f_col_s,f_enable,f_thickness,f_hole_offset,f_offset,f_key_rot,f_center_key);
+					keyboard_screws(f_hole_offset,f_row_s,f_col_s,f_enable,f_offset,f_key_rot,f_center_key);
 			}
 		}
 	}
