@@ -165,7 +165,7 @@ module _corner_hole()
 echo(offset1,offset2,thickness);
 }
 
-module fsr_mount( left_mount, right_mount ) {
+module fsr_mount( left_mount, right_mount, depth = 5 ) {
 offset = 20 ;
 	difference(){
 		union() {
@@ -178,15 +178,15 @@ offset = 20 ;
 						rotate([90,0,0]) translate([5,1,0]) cylinder( r = 2, h = 0.01, $fn = 32,center=true);
 					}
 					difference() {
-						translate([5,0,-4]) cube([10,10,9]);
+						translate([5,0,1-depth]) cube([10,10,4+depth]);
 						
 						translate([10,-0.5,-3]) cube([2,11,4]);
 					}
 				}
-			rotate([0,0,-30]) intersection() {
+			if( depth >0 ) rotate([0,0,-30]) intersection() {
 				minkowski(){
 					hull() {
-						cylinder(r = 9, h = 4);//cube([18,20,4]);
+						cylinder(r = 9, h = depth-1);//cube([18,20,4]);
 						
 						if( left_mount == true ) {
 							translate([0,-offset,2]) cube([18,19,4],center=true);
@@ -200,7 +200,7 @@ offset = 20 ;
 			
 				union() {
 					hull() {
-						cylinder(r = 9, h = 5);//cube([18,20,4]);
+						cylinder(r = 9, h = depth);//cube([18,20,4]);
 						
 						if( left_mount == true ) {
 							translate([0,-offset,2.5]) cube([20,20,5],center=true);
@@ -211,8 +211,8 @@ offset = 20 ;
 					}
 				}
 			}
-			rotate([0,0,-30])
-				cylinder(r1 = 9, r2 = 22/2-0.2, h = 5);
+			if( depth >0 ) rotate([0,0,-30])
+				cylinder(r1 = 9, r2 = 22/2-0.2, h = depth);
 			rotate([0,0,-30]) {
 				if( left_mount == true ) translate([0,-offset,5]) difference() {
 					cylinder(r=m5_washer_diameter/2+2, h = 1);
@@ -364,7 +364,7 @@ module hex_bed_side_mount(bed_dia,arm_position,arm_length) {
 }
 
 
-module hex_bed_corner_mount(bed_dia,arm_position,arm_length) {
+module hex_bed_corner_mount(bed_dia,arm_position,arm_length,use_fan_port,fan_port_diameter) {
 	support_outer_radius = bed_dia/2+6 ;
 	support_inner_radius = bed_dia/3 ;
 	arm_position_to_end = arm_position+20/2 ;
@@ -399,18 +399,43 @@ module hex_bed_corner_mount(bed_dia,arm_position,arm_length) {
 			rotate([0,0,-90+120]) translate([-(75-20/2+bar_length-20),-arm_position,5]) 
 				cylinder(r=m5_diameter,h=1,$fn=32);
 				
-				
+			if( use_fan_port )
+				rotate([0,0,-90+60]) translate([0,-arm_length/3*2+30,5-0.1]) {
+					minkowski() {
+						cylinder(r=fan_port_diameter/2-2,h=15.1-2,$fn=48);
+						sphere( r=2, center=true,$fn = 48 );
+					}
+					cylinder(r1=fan_port_diameter/2+5,r2=fan_port_diameter/2,h=3.1-2,$fn=48);
+				}
+			
+			
+			rotate([0,0,-90+60]) translate([0,-bed_dia/2-16,-1]) {
+				rotate([0,0,-60])
+					fsr_mount(false,false,0);
+			}
+			
+			rotate([0,0,-90+60]) translate([0,-bed_dia/2+20,7.5])
+				translate([0,0,0])//[0,0,-0.1
+				intersection(){
+					minkowski() {
+						translate([-27.5,1.5,0]) cube([30,57.5,5],center = true);
+					//	translate([0,0,-5]) cube([8,10,7]);
+						translate([5,1,-2.5]) sphere( r = 2.5, h = 0.01, $fn = 32,center=true);
+					}
+					translate([-22,-20,0])
+					cube([35,35,5],center = true);
+				}
 				
 			rotate([0,0,-90+60]) translate([0,-bed_dia/2+20,7.5])
 				translate([0,0,0])//[0,0,-0.1
 				intersection(){
 					minkowski() {
-						translate([-5,0,0]) cube([75,57.5,5],center = true);
+						translate([17.5,1.5,0]) cube([30,57.5,5],center = true);
 					//	translate([0,0,-5]) cube([8,10,7]);
 						translate([5,1,-2.5]) sphere( r = 2.5, h = 0.01, $fn = 32,center=true);
 					}
-					translate([0,-20,0])
-					cube([80,35,5],center = true);
+					translate([22,-20,0])
+					cube([35,35,5],center = true);
 				}
 		}
 		
@@ -426,9 +451,102 @@ module hex_bed_corner_mount(bed_dia,arm_position,arm_length) {
 			translate([-bar_length+20,0,0])//[0,0,-0.1
 				cylinder(r=m5_diameter/2,h=100,$fn=32);
 		}
+		
+		if( use_fan_port )
+			rotate([0,0,-90+60]) translate([0,-arm_length/3*2+30,-5]) 
+				cylinder(r=fan_port_diameter/2-2,h=50.1,$fn=48);
 	}
 
 }
+
+module cube_top_bevel(s,sph_r) {
+	intersection(){
+		cube(s,center=true);
+		translate([0,0,sph_r])
+			minkowski(){
+				cube(s-[2*sph_r,2*sph_r,0],center=true);
+				sphere(r=sph_r,center=true,$fn=64);
+				
+			}
+	}
+}
+module cylinder_top_bevel( cyl_r, cyl_h, sph_r ) {
+	intersection(){
+		cylinder(r=cyl_r,h=cyl_h);
+		translate([0,0,sph_r])
+			minkowski(){
+				cylinder(r=cyl_r-sph_r,h=cyl_h-sph_r);
+				sphere(r=sph_r,center=true,$fn=64);
+			}
+	}
+}
+
+module hex_bed_fsr_mount(bed_dia,arm_position,arm_length,use_fan_port,fan_port_diameter) {
+	support_outer_radius = bed_dia/2+6 ;
+	support_inner_radius = bed_dia/3 ;
+	arm_position_to_end = arm_position+20/2 ;
+	arm_position_to_block = arm_length *cos(60);
+	
+	bar_length = abs(150-40-arm_length)/2 ;
+	bed_r = 133;
+
+	difference() {
+		union() {
+			rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,0])
+				cube_top_bevel([40,20,5],2);
+			rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,0]) 
+				cube_top_bevel([40,20,5],2);
+			//	cube([40,20,5],center=true);
+				
+			rotate([0,0,-90+60]) translate([0,-bed_dia/2-16,-10-2.5]) 
+				cylinder( r=18/2, h = 10+5 );
+				
+			hull() {
+			
+				rotate([0,0,-90]) translate([50-5-m3_diameter/2+20,-arm_position,0]) 
+					cube_top_bevel([10,20,5],2);
+
+					
+				rotate([0,0,-90+60]) translate([-30,-bed_dia/2-16,-5-2.5]) 
+					cylinder_top_bevel( 18/2, 5+5, 2 );
+			}
+					
+			hull() {
+				rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2+20),-arm_position,0])
+					cube_top_bevel([10,20,5],2);
+				//	cube([10,20,5],center=true);
+					
+				rotate([0,0,-90+60]) translate([30,-bed_dia/2-16,-5-2.5]) 
+					cylinder_top_bevel( 18/2, 5+5, 2 );
+			}
+			hull() {
+				rotate([0,0,-90+60]) translate([-30,-bed_dia/2-16,-5-2.5]) 
+					cylinder_top_bevel( 18/2, 5+5, 2 );
+				rotate([0,0,-90+60]) translate([30,-bed_dia/2-16,-5-2.5]) 
+					cylinder_top_bevel( 18/2, 5+5, 2 );
+				rotate([0,0,-90+60]) translate([0,-bed_dia/2-16,-5-2.5]) 
+					cylinder_top_bevel( 18/2, 5+5, 2 );
+			}
+		}
+		
+		
+		rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,0]) {
+			translate([0,0,-5])
+				cylinder(r=m3_diameter/2,h=100,$fn=32);
+			rotate([0,0,-90]) translate([0,0,-2.6])
+			cylinder(r=m3_nut_diameter/2,h=2.5,$fn=6);
+		}
+	
+		rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,0]) {
+			translate([0,0,-5])
+				cylinder(r=m3_diameter/2,h=100,$fn=32);
+			rotate([0,0,-90]) translate([0,0,-2.6])
+				cylinder(r=m3_nut_diameter/2,h=2.5,$fn=6);
+		}
+	}
+}
+
+
 function make_left_angle(arm_pos, offset, h ) = atan2(arm_pos+(sin(30)*h),offset-(cos(30)*h));
 function make_right_angle(arm_pos, offset, h ) = atan2(arm_pos+(sin(30)*h),offset+(cos(30)*h));
 
@@ -583,14 +701,19 @@ bed_size = 250 ;
 arm_size = 300 ;
 show_frame = false ;
 show_bed = false ;
-show_bottom_frame = true ;
+show_bottom_frame = false ;
 show_support_fsr = false ;
 show_support_guard = false ;
 show_fsr_mount = false ;
 show_cork = false ;
 show_hex_bed = false ;
-show_hex_bed_side_mount = true ;
-show_hex_bed_corner_mount = true ;
+show_hex_bed_side_mount = false ;
+show_hex_bed_corner_mount = false ;
+show_hex_bed_fsr_mount = true ;
+
+use_fan_exhaust = true ;
+fan_exhaust_diameter = 19 ;
+
 bottom_frame_size = 74 ;
 positions = [30,150,270];
 
@@ -635,7 +758,12 @@ if( show_hex_bed_side_mount )
 if( show_hex_bed_corner_mount )
 	for( i = positions )
 		rotate([0,0,i])
-			translate([0,0,-15]) hex_bed_corner_mount(bed_size,quadralateral_offset,arm_size);
+			translate([0,0,-15]) hex_bed_corner_mount(bed_size,quadralateral_offset,arm_size,use_fan_exhaust,fan_exhaust_diameter);
+			
+if( show_hex_bed_fsr_mount )
+	for( i = positions )
+		rotate([0,0,i])
+			translate([0,0,6]) hex_bed_fsr_mount(bed_size,quadralateral_offset,arm_size);
 	
 if( show_frame )
 	for( i = positions )
