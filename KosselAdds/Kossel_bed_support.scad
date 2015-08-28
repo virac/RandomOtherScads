@@ -170,7 +170,7 @@ offset = 20 ;
 	difference(){
 		union() {
 			rotate([0,0,-30]) 
-				translate([0,0,4.9]) cylinder(r=22/2-0.2, h = 6.1);
+				translate([0,0,4.9]) cylinder(r=22/2-0.2, h = 8.1);
 			rotate([0,0,-30]) translate([0,0,0])
 				rotate([0,0,180]) translate([1,-5,3.99]) intersection() {
 					minkowski() {
@@ -238,7 +238,7 @@ offset = 20 ;
 		rotate([0,0,-30])
 			rotate([0,0,180]) translate([16,-5,0]) cube([2,10,5.2]);
 		rotate([0,0,-30]) 
-			translate([0,0,9]) cylinder(r=19/2, h = 3);
+			translate([0,0,9]) cylinder(r=19/2, h = 10);
 	}
 }
 
@@ -472,10 +472,10 @@ module cube_top_bevel(s,sph_r) {
 }
 module cylinder_top_bevel( cyl_r, cyl_h, sph_r ) {
 	intersection(){
-		cylinder(r=cyl_r,h=cyl_h);
+		cylinder(r=cyl_r,h=cyl_h, $fn = 64);
 		translate([0,0,sph_r])
 			minkowski(){
-				cylinder(r=cyl_r-sph_r,h=cyl_h-sph_r);
+				cylinder(r=cyl_r-sph_r,h=cyl_h-sph_r,$fn = 64);
 				sphere(r=sph_r,center=true,$fn=64);
 			}
 	}
@@ -489,52 +489,95 @@ module hex_bed_fsr_mount(bed_dia,arm_position,arm_length,use_fan_port,fan_port_d
 	
 	bar_length = abs(150-40-arm_length)/2 ;
 	bed_r = 133;
+	
+	fsr_cyl_dia = 18 ;
+	fsr_pad_dia = 13 ;
+	fsr_pad_travel = 5 ;
+	base_thickness = 5 ;
+	branch_additonal_thickness = 5 ;
+	bevel = 2 ;
+	
+	branch_thickness = base_thickness + branch_additonal_thickness ;
 
 	difference() {
 		union() {
 			rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,0])
-				cube_top_bevel([40,20,5],2);
+				cube_top_bevel([40,20,base_thickness],bevel);
 			rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,0]) 
-				cube_top_bevel([40,20,5],2);
+				cube_top_bevel([40,20,base_thickness],bevel);
 			//	cube([40,20,5],center=true);
 				
 			rotate([0,0,-90+60]) translate([0,-bed_dia/2-16,-10-2.5]) 
-				cylinder( r=18/2, h = 10+5 );
+				cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness+fsr_pad_travel, (fsr_cyl_dia-fsr_pad_dia)/2 );
+		//		cylinder( r=18/2, h = 10+5 );
 				
 			hull() {
 			
 				rotate([0,0,-90]) translate([50-5-m3_diameter/2+20,-arm_position,0]) 
-					cube_top_bevel([10,20,5],2);
+					cube_top_bevel([10,20,base_thickness],bevel);
 
 					
 				rotate([0,0,-90+60]) translate([-30,-bed_dia/2-16,-5-2.5]) 
-					cylinder_top_bevel( 18/2, 5+5, 2 );
+					cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness, bevel );
 			}
 					
 			hull() {
 				rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2+20),-arm_position,0])
-					cube_top_bevel([10,20,5],2);
+					cube_top_bevel([10,20,base_thickness],bevel);
 				//	cube([10,20,5],center=true);
 					
 				rotate([0,0,-90+60]) translate([30,-bed_dia/2-16,-5-2.5]) 
-					cylinder_top_bevel( 18/2, 5+5, 2 );
+					cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness, bevel );
 			}
 			hull() {
 				rotate([0,0,-90+60]) translate([-30,-bed_dia/2-16,-5-2.5]) 
-					cylinder_top_bevel( 18/2, 5+5, 2 );
+					cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness, bevel );
 				rotate([0,0,-90+60]) translate([30,-bed_dia/2-16,-5-2.5]) 
-					cylinder_top_bevel( 18/2, 5+5, 2 );
+					cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness, bevel );
 				rotate([0,0,-90+60]) translate([0,-bed_dia/2-16,-5-2.5]) 
-					cylinder_top_bevel( 18/2, 5+5, 2 );
+					cylinder_top_bevel( fsr_cyl_dia/2, branch_thickness, bevel );
 			}
 		}
 		
 		
+		rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,-2.50]) 
+			difference() {
+				union() scale([1,1,1.1]) {
+					rotate([45,0,0]) cube([40,2.5,2.5], center=true);
+					translate([-2.5,5,0]) rotate([45,0,0]) cube([40,2.5,2.5], center=true);
+					translate([0,-5,0]) rotate([45,0,0]) cube([45,2.5,2.5], center=true);
+				}
+				
+				rotate([0,0,-90]) translate([0,0,-2.6])
+					cylinder(r=m3_nut_diameter,h=12.5,$fn=6);
+			}
+		rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,-2.50]) scale([1,1,1.1]) {
+			translate([19,0,-2.5]) rotate([45,5,37]) cube([47.5,2.5,2.5]);
+			translate([19+-2.5,5,-2.5]) rotate([45,5,36]) cube([45,2.5,2.5]);
+			translate([19+2.5,-5,-2.5]) rotate([45,5,37]) cube([50,2.5,2.5]);
+		}
+
+		rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,-2.50])
+			difference() {
+				union() scale([1,1,1.1]) {
+					rotate([45,0,0]) cube([40,2.5,2.5], center=true);
+					translate([2.5,5,0]) rotate([45,0,0]) cube([40,2.5,2.5], center=true);
+					translate([0,-5,0]) rotate([45,0,0]) cube([45,2.5,2.5], center=true);
+				}
+				rotate([0,0,-90]) translate([0,0,-2.6])
+					cylinder(r=m3_nut_diameter,h=12.5,$fn=6);
+			}
+		rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,-2.50]) scale([1,1,1.1]) {
+			translate([-19,0,-2.5]) rotate([45,5,180-37]) cube([47.5,2.5,2.5]);
+			translate([-19+2.5,5,-2.5]) rotate([45,5,180-36]) cube([45,2.5,2.5]);
+			translate([-19-2.5,-5,-2.5]) rotate([45,5,180-37]) cube([50,2.5,2.5]);
+		}
+			
 		rotate([0,0,-90]) translate([50-5-m3_diameter/2,-arm_position,0]) {
 			translate([0,0,-5])
 				cylinder(r=m3_diameter/2,h=100,$fn=32);
 			rotate([0,0,-90]) translate([0,0,-2.6])
-			cylinder(r=m3_nut_diameter/2,h=2.5,$fn=6);
+				cylinder(r=m3_nut_diameter/2,h=2.5,$fn=6);
 		}
 	
 		rotate([0,0,-90+120]) translate([-(50-5-m3_diameter/2),-arm_position,0]) {
@@ -715,7 +758,7 @@ use_fan_exhaust = true ;
 fan_exhaust_diameter = 19 ;
 
 bottom_frame_size = 74 ;
-positions = [30,150,270];
+positions = [30];//,150,270];
 
 offset = 0.0 ;
 
