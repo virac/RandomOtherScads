@@ -26,8 +26,8 @@ kerf = -0.55;	//supports +/- numbers (greater value = tighter fit)
 xMaleCut(offset = 0, cut = xCut1) 
 	yCuts();
 
-xFemaleCut(offset = 0, cut = xCut1) 
-	yCuts();
+//xFemaleCut(offset = 0, cut = xCut1) 
+	//yCuts();
 
 module yCuts()
 {

@@ -52,6 +52,14 @@ module yMaleCut(offset = 0, cut = yCut1)
 	}
 }
 
+module yMaleNegCut(offset = 0, cut = yCut1)
+{
+	difference()
+	{
+		children(0);	
+		rotate ([0,0,-90]) translate([0,-offset,0]) makePuzzleStamp(cutLocations = -cut);
+	}
+}
 
 module yFemaleCut(offset = 0, cut = yCut1)
 {
@@ -63,7 +71,15 @@ module yFemaleCut(offset = 0, cut = yCut1)
 	}
 }
 
-
+module yFemaleNegCut(offset = 0, cut = yCut1)
+{
+	intersection()
+	{
+		children(0);
+		rotate ([0,0,-90]) translate([0,-offset,0]) makePuzzleStamp(cutLocations = -cut,
+			 kerf = kerf);	//only set kerf on female side
+	}
+}
 
 module makePuzzleStamp(kerf = 0)
 {
