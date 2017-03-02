@@ -1,5 +1,6 @@
 use <MCAD/trochoids.scad>
 
+
 module epitrochoidLinear(R, r, d, n, p, thickness, twist) {
 	dth = 360/n;
 	linear_extrude(height = thickness, convexity = 10, twist = twist) {
@@ -37,7 +38,7 @@ module hypotrochoidLinear(R, r, d, n, p, thickness, twist) {
 //===========================================
 // General stuff
 pi = 3.1415926;
-$fn = 30; // facet resolution
+$fn = 256; // facet resolution
 alpha = 180 * $t; // for animation
 //===========================================
 
@@ -51,7 +52,7 @@ alpha = 180 * $t; // for animation
 // The gear parameters determine the rotor parameters, 
 // so let's start by defining them:
 //
-mm_per_tooth = 5; // for timing gears
+mm_per_tooth = 4; // for timing gears
 number_of_teeth = 22; // for timing gears, pick one: 6, 10, 14, 18, 22, 26, etc.
 thickness = 6; 
 hole_diameter = 0;
@@ -68,41 +69,50 @@ backlash = 0.2;
 r =  mm_per_tooth * number_of_teeth / pi / 4; // this is one quarter of pitch radius of timing gears
 R = 4*r; // big R for eip- and hypo- trochoid shapes in rotor
 
-
-rotor_thickness = 80;
-n_wedge = 80; // number of wedges in a rotor quadrant
+axle_length = 100 ;
+axle_diameter = 8.0;
+gear_thickness = 10;
+bearing_thickness = 10;
+washer_thickness = 1;
+rotor_thickness = axle_length-gear_thickness-2* bearing_thickness-3*washer_thickness;
+n_wedge = 100; // number of wedges in a rotor quadrant
 r_bore = 4; // half-side of square rotor bore
-rotor_twist = 60;
+rotor_twist = 45;
 shaft_dia = 12;
 shaft_length = 3;
 
 
 module rootsRotor(R, r, n, p, thickness, twist, fins) {
-	union() {
-		for( i = [0]){//:fins-1] ) {
-	//		rotate([0, 0, i*(360/fins)]) hypotrochoidLinear(R, r, r, p*4, p, thickness, twist);
-		//	rotate([0, 0, i*(360/fins)+(180/fins)]) epitrochoidLinear(R, r, r, p*4, p, thickness, twist);
-		}
-		for( i = [0:fins-1] ) {
-			rotate([0, 0, i*(360/fins)]) //intersection() {
-				//cube([R,R,R]);
-			//	linear_extrude( thickness )
-			//		polygon([[0,0],[r*(fins*2),0],[cos(180/fins)*r*(fins*2),sin(180/fins)*r*(fins*2)]]);
-			
-			///	hypotrochoid(r*(fins*2), r, r, p*4, thickness);
-				hypotrochoidLinear(r*(fins*2), r, r, p*(fins*2), p, thickness, twist);
-			//}
-			rotate([0, 0, i*(360/fins)+(180/fins)]) // intersection() {
-			//	linear_extrude( thickness )
-			//		polygon([[0,0],[r*(fins*4),0],[cos(180/fins)*r*(fins*4),sin(180/fins)*r*(fins*4)]]);
-			//	epitrochoid(r*(fins*2), r, r, p*4, thickness);
-				epitrochoidLinear(r*(fins*2), r, r, p*(fins*2), p, thickness, twist);
-			//}
-		}
-		//rotate([0, 0, 180]) hypotrochoidLinear(R, r, d, n, p, thickness, twist);
-		//rotate([0, 0, 270]) epitrochoidLinear(R, r, d, n, p, thickness, twist);
+	difference() {
+      union() {
+         for( i = [0]){//:fins-1] ) {
+      //		rotate([0, 0, i*(360/fins)]) hypotrochoidLinear(R, r, r, p*4, p, thickness, twist);
+         //	rotate([0, 0, i*(360/fins)+(180/fins)]) epitrochoidLinear(R, r, r, p*4, p, thickness, twist);
+         }
+         for( i = [0:fins-1] ) {
+            rotate([0, 0, i*(360/fins)]) //intersection() {
+               //cube([R,R,R]);
+            //	linear_extrude( thickness )
+            //		polygon([[0,0],[r*(fins*2),0],[cos(180/fins)*r*(fins*2),sin(180/fins)*r*(fins*2)]]);
+            
+            ///	hypotrochoid(r*(fins*2), r, r, p*4, thickness);
+               hypotrochoidLinear(r*(fins*2), r, r, p*(fins*2), p, thickness, twist);
+            //}
+            rotate([0, 0, i*(360/fins)+(180/fins)]) // intersection() {
+            //	linear_extrude( thickness )
+            //		polygon([[0,0],[r*(fins*4),0],[cos(180/fins)*r*(fins*4),sin(180/fins)*r*(fins*4)]]);
+            //	epitrochoid(r*(fins*2), r, r, p*4, thickness);
+               epitrochoidLinear(r*(fins*2), r, r, p*(fins*2), p, thickness, twist);
+            //}
+         }
+         //rotate([0, 0, 180]) hypotrochoidLinear(R, r, d, n, p, thickness, twist);
+         //rotate([0, 0, 270]) epitrochoidLinear(R, r, d, n, p, thickness, twist);
+      }
+  #    cylinder( r = axle_diameter/2, h = axle_length*2, center = true);
 	}
 }
+
+
 fin_count = 2 ;
 a = 0;
 

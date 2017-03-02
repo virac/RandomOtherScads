@@ -9,8 +9,8 @@ split_parts = false;
 
 show_mirror = false;
 with_main = true;
-with_thumb = false;
-with_func = false;
+with_thumb = true;
+with_func = true;
 with_support = false;
 
 show_keyswitches = false;
@@ -43,7 +43,7 @@ thumb_rows = 3 ;
 thumb_cols = 3 ;
 
 func_rows_0 = 0 ;
-runc_cols_0 = 0 ;
+func_cols_0 = 0 ;
 func_rows = 1 ;
 func_cols = 6 ;
 
@@ -174,6 +174,30 @@ func_screw_hole_offset = [
 				[0.25,3,0],
 				[0.05,6.2,0] ];
 				
+            
+linked_thumb_keys	= [];
+				/*[7,2],[1,1],
+				[6,2],[1,1],
+				[5,2],[1,1],
+				[5,1],[1,1]];*/
+//				[,],[,]];
+
+linked_func_keys	= [];
+		/*		[1,5],[0,0],
+				[2,5],[0,0],
+				[2,5],[0,1],
+				[3,5],[0,1],
+				[3,5],[0,2],
+				[4,5],[0,2],
+				[4,5],[0,3],
+				[5,5],[0,3],
+				[5,5],[0,4],
+				[6,5],[0,4],
+				[6,5],[0,5],
+				[7,5],[0,5]
+				
+				]; */           
+            
 //-1 = 1x1 blank (structure there but no keyswitch hole)
 // 0 = 1x1 no key
 // 1 = 1x1 key
@@ -464,10 +488,13 @@ module patch_top(i,j,row_s,col_s,enable,thickness,enlargement,extend) {
 }
 
 module patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness) {
-	for( i = [row_0:row_n-1] )
-		for( j = [col_0:col_n-1] )  if( enable[i][j] != 0 ) {
-			patch_box(row_0,row_n,col_0,col_n,i,j,row_s,col_s,enable,thickness);
-		}
+	for( i = [row_0:row_n-1] ) {
+		for( j = [col_0:col_n-1] ) {
+         if( enable[i][j] != 0 ) {
+            patch_box(row_0,row_n,col_0,col_n,i,j,row_s,col_s,enable,thickness);
+         }
+      }
+   }
 }
 
 module patch_box(row_0,row_n,col_0,col_n,i,j,row_s,col_s,enable,thickness) {
@@ -728,7 +755,7 @@ module keyboard_plate_part(build_screws,row_0,row_n,col_0,col_n,row_s,col_s,enab
 				
 					patch_set(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness);
 					if( build_screws==true ) 
-				#		keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness );
+						keyboard_screw_mounts(hole_offset,row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness );
 					//if( show_support==true )
 					//	keyboard_plate_support(row_0,row_n,col_0,col_n,row_s,col_s,enable,thickness,offset);
 				}
@@ -760,6 +787,7 @@ module keyboard_plate(	show_main, show_thumb, show_func, build_screws, l_t_keys,
 					patch_bottom(func_rows,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,
 									func_offset,func_key_def_rot,func_center_key);
 			}*/
+
 			if( show_main == true )
 				keyboard_plate_part(build_screws,m_row_0,m_row_n,m_col_0,m_col_n,m_row_s,m_col_s,m_enable,m_thickness,m_hole_offset,m_offset,m_key_rot,m_center_key);
 			if( show_thumb == true )
@@ -824,7 +852,7 @@ module keyboard_screws_mount_hole( hole_offset, row_s, col_s, enable, offset = [
 						translate( screw_trans( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +//key_trans_noZ( hole_offset[i][0], hole_offset[i][1], row_s, col_s ) +
 									[default_key_horiz_space/2,default_key_vert_space/2,0])  {
 							translate([0,0,-cherry_mx_mount_bottom_thickness-0.1])
-				#				cylinder( r = m3_diameter/2, h = 30, $fn = 30 ); // hole
+								cylinder( r = m3_diameter/2, h = 30, $fn = 30 ); // hole
 						}
 				}
 }
@@ -1067,7 +1095,7 @@ if( with_support == true ) {
 			if( split_parts == true ) {
 				difference() {
 					translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+					keyboard_plate( with_main,with_thumb,with_func, show_screws, linked_thumb_keys, linked_func_keys,
 									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
 									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
 									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
@@ -1077,7 +1105,7 @@ if( with_support == true ) {
 				}
 			} else {
 				translate([0,0,standoff_thickness+cherry_mx_mount_thickness])
-					keyboard_plate( with_main,with_thumb,with_func, show_screws,
+					keyboard_plate( with_main,with_thumb,with_func, show_screws, linked_thumb_keys, linked_func_keys,
 									rows_0,rows,cols_0,cols,row_shift,col_shift,key_enable,cherry_mx_mount_thickness,screw_hole_offset,[0,0,0],[0,0,0],[0,0],
 									thumb_rows_0,thumb_rows,thumb_cols_0,thumb_cols,thumb_row_shift,thumb_col_shift,thumb_key_enable,cherry_mx_mount_thickness,thumb_screw_hole_offset,thumb_offset,thumb_key_def_rot,thumb_center_key,
 									func_rows_0,func_rows,func_cols_0,func_cols,func_row_shift,func_col_shift,func_key_enable,cherry_mx_mount_thickness,func_screw_hole_offset,func_offset,func_key_def_rot,func_center_key);
